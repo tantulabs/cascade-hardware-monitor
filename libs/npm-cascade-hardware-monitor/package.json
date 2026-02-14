@@ -1,5 +1,5 @@
 {
-  "name": "cascade-hardware-monitor",
+  "name": "@tantulabs/cascade-hardware-monitor",
   "version": "1.0.0",
   "description": "Modern, AI-friendly hardware monitoring library. Superior alternative to OpenHardwareMonitor with cross-platform support (Windows, macOS, Linux) and AI integration.",
   "main": "dist/index.js",

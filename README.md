@@ -90,14 +90,16 @@ Cascade is a **modern replacement** for OpenHardwareMonitor, HWiNFO, and LibreHa
 | Feature | Cascade | OpenHardwareMonitor | HWiNFO | LibreHardwareMonitor |
 |---------|---------|---------------------|--------|----------------------|
 | **Cross-Platform** | ✅ Win/Mac/Linux | ❌ Windows only | ❌ Windows only | ❌ Windows only |
-| **REST API** | ✅ Full JSON API | ❌ None | ⚠️ Limited | ❌ None |
+| **REST API** | ✅ Full JSON API | ❌ None | ⚠️ Shared Memory | ⚠️ WMI only |
 | **AI Integration** | ✅ Gemini AI | ❌ None | ❌ None | ❌ None |
-| **Apple Silicon** | ✅ Native M1/M2/M3 | ❌ None | ❌ None | ❌ None |
+| **Apple Silicon** | ✅ Native M1/M2/M3/M4 | ❌ None | ❌ None | ❌ None |
 | **WebSocket Streaming** | ✅ Real-time | ❌ None | ❌ None | ❌ None |
-| **Multi-Language SDKs** | ✅ 5 languages | ⚠️ C# only | ❌ None | ⚠️ C# only |
+| **Multi-Language SDKs** | ✅ 5 languages | ⚠️ C# only | ❌ None | ⚠️ C# NuGet |
 | **Health Scores** | ✅ Auto-generated | ❌ Manual | ❌ Manual | ❌ Manual |
-| **Active Development** | ✅ 2026+ | ❌ Abandoned | ✅ Active | ✅ Active |
-| **Open Source** | ✅ MIT License | ✅ MPL | ❌ Proprietary | ✅ MPL |
+| **Bottleneck Detection** | ✅ Automatic | ❌ None | ❌ None | ❌ None |
+| **Active Development** | ✅ 2026+ | ❌ Abandoned (2020) | ✅ Active | ✅ Active (fork) |
+| **Open Source** | ✅ MIT License | ✅ MPL-2.0 | ❌ Proprietary | ✅ MPL-2.0 |
+| **Latest Hardware** | ✅ Intel 15th Gen, AMD 9000, RTX 50 | ❌ Outdated | ✅ Yes | ✅ Community updates |
 
 **Perfect for:**
 - 🤖 **AI Agents** - Structured JSON API with semantic analysis

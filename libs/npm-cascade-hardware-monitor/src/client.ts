@@ -54,7 +54,7 @@ export class CascadeClient {
         throw new Error(`API error: ${response.status} ${response.statusText}`);
       }
 
-      return await response.json();
+      return await response.json() as T;
     } finally {
       clearTimeout(timeoutId);
     }
@@ -80,7 +80,7 @@ export class CascadeClient {
         throw new Error(`API error: ${response.status} ${response.statusText}`);
       }
 
-      return await response.json();
+      return await response.json() as T;
     } finally {
       clearTimeout(timeoutId);
     }
