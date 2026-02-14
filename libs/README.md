@@ -100,7 +100,7 @@ for _, warning := range analysis.Warnings {
 | AI Integration | ✅ Built-in | ❌ None |
 | Apple Silicon | ✅ Native | ❌ None |
 | Multi-language SDKs | ✅ 5 languages | ❌ C# only |
-| Active development | ✅ 2024+ | ❌ Abandoned |
+| Active development | ✅ 2026+ | ❌ Abandoned |
 
 ## Documentation
 

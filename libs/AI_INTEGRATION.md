@@ -89,7 +89,7 @@ if (bottleneck.severity === 'high') {
 | WebSocket | ✅ Real-time | ❌ None |
 | Bottleneck detection | ✅ Automatic | ❌ None |
 | Workload profiling | ✅ Automatic | ❌ None |
-| Active development | ✅ 2024+ | ❌ Abandoned |
+| Active development | ✅ 2026+ | ❌ Abandoned |
 
 ## Response Format Examples
 

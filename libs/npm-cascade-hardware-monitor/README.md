@@ -19,7 +19,7 @@
 | Fan control | ✅ Yes | ❌ No |
 | SMART monitoring | ✅ Yes | ⚠️ Basic |
 | TypeScript | ✅ Full types | ❌ No |
-| Active development | ✅ 2024+ | ❌ Abandoned |
+| Active development | ✅ 2026+ | ❌ Abandoned |
 
 ## Installation
 

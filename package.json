@@ -67,7 +67,7 @@
   "build": {
     "appId": "com.tantulabs.cascade-hardware-monitor",
     "productName": "Cascade Hardware Monitor",
-    "copyright": "Copyright © 2024 TantuLabs",
+    "copyright": "Copyright © 2026 TantuLabs",
     "directories": {
       "output": "release",
       "buildResources": "assets"

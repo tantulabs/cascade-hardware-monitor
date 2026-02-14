@@ -19,7 +19,7 @@
 | Multi-GPU support | ✅ NVIDIA/AMD/Intel/Apple | ⚠️ Limited |
 | Fan control | ✅ Yes | ❌ No |
 | SMART monitoring | ✅ Yes | ⚠️ Basic |
-| Active development | ✅ 2024+ | ❌ Abandoned |
+| Active development | ✅ 2026+ | ❌ Abandoned |
 
 ## Installation
 

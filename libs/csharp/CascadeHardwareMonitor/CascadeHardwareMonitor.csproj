@@ -11,7 +11,7 @@
     <Authors>TantuLabs</Authors>
     <Company>TantuLabs</Company>
     <Description>Modern, AI-friendly hardware monitoring library. Superior alternative to OpenHardwareMonitor with cross-platform support (Windows, macOS, Linux) and AI integration.</Description>
-    <Copyright>Copyright © 2024 TantuLabs</Copyright>
+    <Copyright>Copyright © 2026 TantuLabs</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://tantulabs-cascade.web.app</PackageProjectUrl>
     <RepositoryUrl>https://github.com/tantulabs/cascade-hardware-monitor</RepositoryUrl>
