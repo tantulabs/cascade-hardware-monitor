@@ -585,6 +585,57 @@ curl -X POST http://localhost:8085/api/v1/ai/gemini/chat \
 
 If Gemini AI is not configured or unavailable, all analysis endpoints return rule-based fallback assessments with `aiConfidence: 0` to indicate no AI was used.
 
+## Building Executables
+
+Pre-built executables are available in the [Releases](https://github.com/tantulabs/cascade-hardware-monitor/releases) section.
+
+### Build From Source
+
+#### Prerequisites
+- Node.js 20+
+- npm 10+
+
+#### Build Commands
+
+```bash
+# Install dependencies
+npm install
+
+# Build for current platform
+npm run dist
+
+# Build for specific platforms
+npm run dist:win    # Windows (.exe installer + portable)
+npm run dist:mac    # macOS (.dmg + .zip for x64 and arm64)
+npm run dist:linux  # Linux (.AppImage + .deb)
+```
+
+#### Output Files
+
+| Platform | Output | Location |
+|----------|--------|----------|
+| **Windows** | `Cascade Hardware Monitor-1.0.0-win-x64.exe` | `release/` |
+| **Windows** | `Cascade Hardware Monitor-1.0.0-win-x64-portable.exe` | `release/` |
+| **macOS (Intel)** | `Cascade Hardware Monitor-1.0.0-mac-x64.dmg` | `release/` |
+| **macOS (Apple Silicon)** | `Cascade Hardware Monitor-1.0.0-mac-arm64.dmg` | `release/` |
+| **Linux** | `Cascade Hardware Monitor-1.0.0-linux-x64.AppImage` | `release/` |
+| **Linux** | `cascade-hardware-monitor_1.0.0_amd64.deb` | `release/` |
+
+### Running Without Building
+
+If you don't want to build executables, you can run directly:
+
+```bash
+# Development mode (with hot reload)
+npm run dev
+
+# Production mode
+npm run build
+npm start
+```
+
+The API will be available at `http://localhost:8085/api/v1`
+
 ## Links
 
 - **🌐 Website**: [tantulabs-cascade.web.app](https://tantulabs-cascade.web.app)
