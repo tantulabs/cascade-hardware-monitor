@@ -83,6 +83,28 @@ A comprehensive cross-platform hardware monitoring application with full system 
 - Dark theme with beautiful UI
 - Responsive design for all devices
 
+## 🔄 Why Cascade? (vs OpenHardwareMonitor)
+
+Cascade is a **modern replacement** for OpenHardwareMonitor, HWiNFO, and LibreHardwareMonitor:
+
+| Feature | Cascade | OpenHardwareMonitor | HWiNFO | LibreHardwareMonitor |
+|---------|---------|---------------------|--------|----------------------|
+| **Cross-Platform** | ✅ Win/Mac/Linux | ❌ Windows only | ❌ Windows only | ❌ Windows only |
+| **REST API** | ✅ Full JSON API | ❌ None | ⚠️ Limited | ❌ None |
+| **AI Integration** | ✅ Gemini AI | ❌ None | ❌ None | ❌ None |
+| **Apple Silicon** | ✅ Native M1/M2/M3 | ❌ None | ❌ None | ❌ None |
+| **WebSocket Streaming** | ✅ Real-time | ❌ None | ❌ None | ❌ None |
+| **Multi-Language SDKs** | ✅ 5 languages | ⚠️ C# only | ❌ None | ⚠️ C# only |
+| **Health Scores** | ✅ Auto-generated | ❌ Manual | ❌ Manual | ❌ Manual |
+| **Active Development** | ✅ 2026+ | ❌ Abandoned | ✅ Active | ✅ Active |
+| **Open Source** | ✅ MIT License | ✅ MPL | ❌ Proprietary | ✅ MPL |
+
+**Perfect for:**
+- 🤖 **AI Agents** - Structured JSON API with semantic analysis
+- 🎮 **Gamers** - Real-time monitoring with alerts
+- 💻 **Developers** - Multi-language SDKs and WebSocket streaming
+- 🖥️ **System Admins** - Cross-platform with IPMI/BMC support
+
 ## Installation
 
 ```bash
