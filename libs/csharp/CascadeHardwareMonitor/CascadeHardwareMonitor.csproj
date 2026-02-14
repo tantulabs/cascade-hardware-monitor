@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net6.0;net7.0;net8.0;netstandard2.0</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    
+    <PackageId>CascadeHardwareMonitor</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>TantuLabs</Authors>
+    <Company>TantuLabs</Company>
+    <Description>Modern, AI-friendly hardware monitoring library. Superior alternative to OpenHardwareMonitor with cross-platform support (Windows, macOS, Linux) and AI integration.</Description>
+    <Copyright>Copyright © 2024 TantuLabs</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://tantulabs-cascade.web.app</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/tantulabs/cascade-hardware-monitor</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>hardware;monitoring;cpu;gpu;temperature;sensors;nvidia;amd;intel;apple-silicon;ai;cross-platform</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\CascadeHardwareMonitor.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="8.0.0" Condition="'$(TargetFramework)' == 'netstandard2.0'" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>

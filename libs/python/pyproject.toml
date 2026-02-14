@@ -1,0 +1,58 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cascade-hardware-monitor"
+version = "1.0.0"
+description = "Modern, AI-friendly hardware monitoring library. Superior alternative to OpenHardwareMonitor with cross-platform support."
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "TantuLabs", email = "contact@tantulabs.com"}
+]
+maintainers = [
+    {name = "TantuLabs", email = "contact@tantulabs.com"}
+]
+keywords = [
+    "hardware", "monitoring", "cpu", "gpu", "temperature", "sensors",
+    "system-monitor", "nvidia", "amd", "intel", "apple-silicon",
+    "ai", "machine-learning", "automation", "cross-platform"
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: System :: Hardware",
+    "Topic :: System :: Monitoring",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Typing :: Typed"
+]
+requires-python = ">=3.8"
+dependencies = []
+
+[project.optional-dependencies]
+websocket = ["websockets>=10.0"]
+async = ["aiohttp>=3.8"]
+dev = ["pytest", "pytest-cov", "black", "mypy"]
+
+[project.urls]
+Homepage = "https://tantulabs-cascade.web.app"
+Documentation = "https://github.com/tantulabs/cascade-hardware-monitor/wiki"
+Repository = "https://github.com/tantulabs/cascade-hardware-monitor"
+Issues = "https://github.com/tantulabs/cascade-hardware-monitor/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["cascade_hardware_monitor*"]

@@ -1,0 +1,19 @@
+{
+  "id": "nvidia-smi",
+  "name": "NVIDIA SMI Plugin",
+  "version": "1.0.0",
+  "author": "Cascade",
+  "description": "Enhanced NVIDIA GPU monitoring using nvidia-smi",
+  "homepage": "",
+  "repository": "",
+  "license": "MIT",
+  "sensors": [
+    "nvidia.gpu.temperature",
+    "nvidia.gpu.utilization",
+    "nvidia.gpu.memory",
+    "nvidia.gpu.power",
+    "nvidia.gpu.fan",
+    "nvidia.gpu.clock"
+  ],
+  "dependencies": {}
+}

@@ -1,0 +1,15 @@
+{
+  "pollingInterval": 1000,
+  "enabledSensors": ["cpu", "gpu", "memory", "disk", "network", "bluetooth", "audio", "battery", "usb"],
+  "apiPort": 8085,
+  "wsPort": 8086,
+  "enableAuth": false,
+  "apiKey": "",
+  "enableHistory": true,
+  "historyRetention": 3600,
+  "enableAlerts": true,
+  "startMinimized": false,
+  "startWithWindows": false,
+  "theme": "system",
+  "language": "en"
+}

@@ -1,0 +1,28 @@
+[package]
+name = "cascade-hardware-monitor"
+version = "1.0.0"
+edition = "2021"
+authors = ["TantuLabs <contact@tantulabs.com>"]
+description = "Modern, AI-friendly hardware monitoring library. Superior alternative to OpenHardwareMonitor with cross-platform support."
+license = "MIT"
+repository = "https://github.com/tantulabs/cascade-hardware-monitor"
+homepage = "https://tantulabs-cascade.web.app"
+documentation = "https://docs.rs/cascade-hardware-monitor"
+readme = "README.md"
+keywords = ["hardware", "monitoring", "cpu", "gpu", "sensors", "ai"]
+categories = ["hardware-support", "api-bindings", "development-tools"]
+
+[dependencies]
+reqwest = { version = "0.11", features = ["json", "blocking"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = "1.0"
+tokio = { version = "1.0", features = ["full"], optional = true }
+
+[features]
+default = ["blocking"]
+blocking = ["reqwest/blocking"]
+async = ["tokio", "reqwest/default"]
+
+[dev-dependencies]
+tokio-test = "0.4"

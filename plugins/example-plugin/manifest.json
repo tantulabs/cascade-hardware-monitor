@@ -1,0 +1,12 @@
+{
+  "id": "example-plugin",
+  "name": "Example Hardware Plugin",
+  "version": "1.0.0",
+  "author": "Cascade",
+  "description": "An example plugin demonstrating the plugin architecture",
+  "homepage": "",
+  "repository": "",
+  "license": "MIT",
+  "sensors": ["custom.example.temperature", "custom.example.load"],
+  "dependencies": {}
+}

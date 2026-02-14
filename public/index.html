@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cascade Hardware Monitor</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              200: '#bae6fd',
+              300: '#7dd3fc',
+              400: '#38bdf8',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+              800: '#075985',
+              900: '#0c4a6e'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 5px rgba(14, 165, 233, 0.5); }
+      50% { box-shadow: 0 0 20px rgba(14, 165, 233, 0.8); }
+    }
+    .pulse-glow { animation: pulse-glow 2s infinite; }
+    .gauge-ring { transition: stroke-dashoffset 0.5s ease-out; }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #1e293b; }
+    ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+  </style>
+</head>
+<body class="bg-slate-900 text-white min-h-screen">
+  <div id="app">
+    <nav class="bg-slate-800 border-b border-slate-700 px-6 py-4 flex items-center justify-between sticky top-0 z-50">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-lg flex items-center justify-center">
+          <i data-lucide="cpu" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold">Cascade Hardware Monitor</h1>
+          <p class="text-xs text-slate-400" id="status-text">Connecting...</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2 text-sm">
+          <span class="w-2 h-2 rounded-full bg-green-500 pulse-glow" id="connection-indicator"></span>
+          <span id="connection-status">Connected</span>
+        </div>
+        <a href="/api-docs.html" class="p-2 hover:bg-slate-700 rounded-lg transition" title="API Documentation">
+          <i data-lucide="book-open" class="w-5 h-5"></i>
+        </a>
+        <button onclick="toggleTheme()" class="p-2 hover:bg-slate-700 rounded-lg transition">
+          <i data-lucide="moon" class="w-5 h-5"></i>
+        </button>
+        <button onclick="openSettings()" class="p-2 hover:bg-slate-700 rounded-lg transition">
+          <i data-lucide="settings" class="w-5 h-5"></i>
+        </button>
+      </div>
+    </nav>
+
+    <main class="p-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <div class="bg-slate-800 rounded-xl p-6 border border-slate-700" id="cpu-card">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                <i data-lucide="cpu" class="w-6 h-6 text-blue-400"></i>
+              </div>
+              <div>
+                <h3 class="font-semibold">CPU</h3>
+                <p class="text-xs text-slate-400" id="cpu-name">Loading...</p>
+              </div>
+            </div>
+            <button onclick="showConfigHelp('cpu')" class="p-2 hover:bg-slate-700 rounded-lg transition group relative" title="Temperature configuration help">
+              <i data-lucide="info" class="w-4 h-4 text-slate-400 group-hover:text-blue-400"></i>
+            </button>
+          </div>
+          <div class="flex items-center justify-center mb-4">
+            <svg class="w-32 h-32 transform -rotate-90">
+              <circle cx="64" cy="64" r="56" stroke="#334155" stroke-width="8" fill="none"/>
+              <circle cx="64" cy="64" r="56" stroke="#3b82f6" stroke-width="8" fill="none"
+                      stroke-dasharray="351.86" stroke-dashoffset="351.86" class="gauge-ring" id="cpu-gauge"/>
+            </svg>
+            <div class="absolute text-center">
+              <span class="text-3xl font-bold" id="cpu-load">0</span>
+              <span class="text-lg">%</span>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <p class="text-slate-400">Temperature</p>
+              <p class="font-semibold" id="cpu-temp">-- °C</p>
+            </div>
+            <div>
+              <p class="text-slate-400">Speed</p>
+              <p class="font-semibold" id="cpu-speed">-- GHz</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-slate-800 rounded-xl p-6 border border-slate-700" id="gpu-card">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
+                <i data-lucide="monitor" class="w-6 h-6 text-green-400"></i>
+              </div>
+              <div>
+                <h3 class="font-semibold">GPU</h3>
+                <p class="text-xs text-slate-400" id="gpu-count">Loading...</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="showConfigHelp('gpu')" class="p-2 hover:bg-slate-700 rounded-lg transition group" title="Temperature configuration help">
+                <i data-lucide="info" class="w-4 h-4 text-slate-400 group-hover:text-green-400"></i>
+              </button>
+              <select class="bg-slate-700 border border-slate-600 rounded px-2 py-1 text-xs" id="gpu-select">
+              <option value="0">GPU 0</option>
+            </select>
+            </div>
+          </div>
+          <div class="flex items-center justify-center mb-4">
+            <svg class="w-32 h-32 transform -rotate-90">
+              <circle cx="64" cy="64" r="56" stroke="#334155" stroke-width="8" fill="none"/>
+              <circle cx="64" cy="64" r="56" stroke="#22c55e" stroke-width="8" fill="none"
+                      stroke-dasharray="351.86" stroke-dashoffset="351.86" class="gauge-ring" id="gpu-gauge"/>
+            </svg>
+            <div class="absolute text-center">
+              <span class="text-3xl font-bold" id="gpu-load">0</span>
+              <span class="text-lg">%</span>
+            </div>
+          </div>
+          <div class="text-xs text-slate-400 text-center mb-2" id="gpu-name">--</div>
+          <div class="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <p class="text-slate-400">Temperature</p>
+              <p class="font-semibold" id="gpu-temp">-- °C</p>
+            </div>
+            <div>
+              <p class="text-slate-400">VRAM</p>
+              <p class="font-semibold" id="gpu-vram">-- GB</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-slate-800 rounded-xl p-6 border border-slate-700" id="memory-card">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center">
+                <i data-lucide="memory-stick" class="w-6 h-6 text-purple-400"></i>
+              </div>
+              <div>
+                <h3 class="font-semibold">Memory</h3>
+                <p class="text-xs text-slate-400" id="memory-info">Loading...</p>
+              </div>
+            </div>
+            <button onclick="showConfigHelp('memory')" class="p-2 hover:bg-slate-700 rounded-lg transition group" title="Temperature configuration help">
+              <i data-lucide="info" class="w-4 h-4 text-slate-400 group-hover:text-purple-400"></i>
+            </button>
+          </div>
+          <div class="flex items-center justify-center mb-4">
+            <svg class="w-32 h-32 transform -rotate-90">
+              <circle cx="64" cy="64" r="56" stroke="#334155" stroke-width="8" fill="none"/>
+              <circle cx="64" cy="64" r="56" stroke="#a855f7" stroke-width="8" fill="none"
+                      stroke-dasharray="351.86" stroke-dashoffset="351.86" class="gauge-ring" id="memory-gauge"/>
+            </svg>
+            <div class="absolute text-center">
+              <span class="text-3xl font-bold" id="memory-load">0</span>
+              <span class="text-lg">%</span>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <p class="text-slate-400">Used</p>
+              <p class="font-semibold" id="memory-used">-- GB</p>
+            </div>
+            <div>
+              <p class="text-slate-400">Total</p>
+              <p class="font-semibold" id="memory-total">-- GB</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-slate-800 rounded-xl p-6 border border-slate-700" id="disk-card">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 bg-orange-500/20 rounded-lg flex items-center justify-center">
+                <i data-lucide="hard-drive" class="w-6 h-6 text-orange-400"></i>
+              </div>
+              <div>
+                <h3 class="font-semibold">Storage</h3>
+                <p class="text-xs text-slate-400" id="disk-info">Loading...</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="showConfigHelp('disk')" class="p-2 hover:bg-slate-700 rounded-lg transition group" title="Temperature configuration help">
+                <i data-lucide="info" class="w-4 h-4 text-slate-400 group-hover:text-orange-400"></i>
+              </button>
+              <select class="bg-slate-700 border border-slate-600 rounded px-2 py-1 text-xs" id="disk-select">
+                <option value="all">All Drives</option>
+              </select>
+            </div>
+          </div>
+          <div class="flex items-center justify-center mb-4">
+            <svg class="w-32 h-32 transform -rotate-90">
+              <circle cx="64" cy="64" r="56" stroke="#334155" stroke-width="8" fill="none"/>
+              <circle cx="64" cy="64" r="56" stroke="#f97316" stroke-width="8" fill="none"
+                      stroke-dasharray="351.86" stroke-dashoffset="351.86" class="gauge-ring" id="disk-gauge"/>
+            </svg>
+            <div class="absolute text-center">
+              <span class="text-3xl font-bold" id="disk-load">0</span>
+              <span class="text-lg">%</span>
+            </div>
+          </div>
+          <div class="text-xs text-slate-400 text-center mb-2" id="disk-name">--</div>
+          <div class="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <p class="text-slate-400">Used</p>
+              <p class="font-semibold" id="disk-used">-- GB</p>
+            </div>
+            <div>
+              <p class="text-slate-400">Total</p>
+              <p class="font-semibold" id="disk-total">-- GB</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+        <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 lg:col-span-2">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-semibold flex items-center gap-2">
+              <i data-lucide="wifi" class="w-5 h-5 text-cyan-400"></i>
+              Network
+            </h3>
+            <select class="bg-slate-700 border border-slate-600 rounded px-3 py-1 text-sm" id="network-select">
+              <option>All Interfaces</option>
+            </select>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="network-stats">
+            <div class="bg-slate-700/50 rounded-lg p-4">
+              <p class="text-slate-400 text-sm">Download</p>
+              <p class="text-2xl font-bold text-cyan-400" id="net-download">0 KB/s</p>
+            </div>
+            <div class="bg-slate-700/50 rounded-lg p-4">
+              <p class="text-slate-400 text-sm">Upload</p>
+              <p class="text-2xl font-bold text-green-400" id="net-upload">0 KB/s</p>
+            </div>
+            <div class="bg-slate-700/50 rounded-lg p-4">
+              <p class="text-slate-400 text-sm">Total Received</p>
+              <p class="text-2xl font-bold" id="net-total-rx">0 GB</p>
+            </div>
+            <div class="bg-slate-700/50 rounded-lg p-4">
+              <p class="text-slate-400 text-sm">Total Sent</p>
+              <p class="text-2xl font-bold" id="net-total-tx">0 GB</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-slate-800 rounded-xl p-6 border border-slate-700">
+          <h3 class="font-semibold flex items-center gap-2 mb-4">
+            <i data-lucide="bell" class="w-5 h-5 text-yellow-400"></i>
+            Active Alerts
+          </h3>
+          <div class="space-y-3" id="alerts-list">
+            <p class="text-slate-400 text-sm">No active alerts</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div class="bg-slate-800 rounded-xl p-6 border border-slate-700">
+          <h3 class="font-semibold flex items-center gap-2 mb-4">
+            <i data-lucide="bluetooth" class="w-5 h-5 text-blue-400"></i>
+            Bluetooth Devices
+          </h3>
+          <div class="space-y-3" id="bluetooth-list">
+            <p class="text-slate-400 text-sm">No devices found</p>
+          </div>
+        </div>
+
+        <div class="bg-slate-800 rounded-xl p-6 border border-slate-700">
+          <h3 class="font-semibold flex items-center gap-2 mb-4">
+            <i data-lucide="volume-2" class="w-5 h-5 text-pink-400"></i>
+            Audio Devices
+          </h3>
+          <div class="space-y-3" id="audio-list">
+            <p class="text-slate-400 text-sm">No devices found</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div class="bg-slate-800 rounded-xl p-6 border border-slate-700">
+          <h3 class="font-semibold flex items-center gap-2 mb-4">
+            <i data-lucide="usb" class="w-5 h-5 text-slate-400"></i>
+            USB Devices
+          </h3>
+          <div class="space-y-2 max-h-64 overflow-y-auto" id="usb-list">
+            <p class="text-slate-400 text-sm">No devices found</p>
+          </div>
+        </div>
+
+        <div class="bg-slate-800 rounded-xl p-6 border border-slate-700">
+          <h3 class="font-semibold flex items-center gap-2 mb-4">
+            <i data-lucide="activity" class="w-5 h-5 text-red-400"></i>
+            Top Processes
+          </h3>
+          <div class="space-y-2 max-h-64 overflow-y-auto" id="process-list">
+            <p class="text-slate-400 text-sm">Loading...</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-slate-800 rounded-xl p-6 border border-slate-700">
+        <h3 class="font-semibold flex items-center gap-2 mb-4">
+          <i data-lucide="server" class="w-5 h-5 text-slate-400"></i>
+          System Information
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="system-info">
+          <div>
+            <p class="text-slate-400 text-sm">Manufacturer</p>
+            <p class="font-semibold" id="sys-manufacturer">--</p>
+          </div>
+          <div>
+            <p class="text-slate-400 text-sm">Model</p>
+            <p class="font-semibold" id="sys-model">--</p>
+          </div>
+          <div>
+            <p class="text-slate-400 text-sm">OS</p>
+            <p class="font-semibold" id="sys-os">--</p>
+          </div>
+          <div>
+            <p class="text-slate-400 text-sm">Hostname</p>
+            <p class="font-semibold" id="sys-hostname">--</p>
+          </div>
+          <div>
+            <p class="text-slate-400 text-sm">Motherboard</p>
+            <p class="font-semibold" id="sys-motherboard">--</p>
+          </div>
+          <div>
+            <p class="text-slate-400 text-sm">BIOS</p>
+            <p class="font-semibold" id="sys-bios">--</p>
+          </div>
+          <div>
+            <p class="text-slate-400 text-sm">Architecture</p>
+            <p class="font-semibold" id="sys-arch">--</p>
+          </div>
+          <div>
+            <p class="text-slate-400 text-sm">Uptime</p>
+            <p class="font-semibold" id="sys-uptime">--</p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div id="settings-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+      <div class="bg-slate-800 rounded-xl p-6 w-full max-w-lg mx-4 border border-slate-700">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-xl font-bold">Settings</h2>
+          <button onclick="closeSettings()" class="p-2 hover:bg-slate-700 rounded-lg">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium mb-2">Polling Interval (ms)</label>
+            <input type="number" id="setting-polling" value="1000" min="100" max="60000"
+                   class="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2">
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">API Port</label>
+            <input type="number" id="setting-port" value="8085" min="1024" max="65535"
+                   class="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2">
+          </div>
+          <div class="flex items-center justify-between">
+            <span>Enable Authentication</span>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="setting-auth" class="sr-only peer">
+              <div class="w-11 h-6 bg-slate-600 peer-focus:ring-2 peer-focus:ring-primary-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-500"></div>
+            </label>
+          </div>
+          <div class="flex items-center justify-between">
+            <span>Enable Alerts</span>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="setting-alerts" checked class="sr-only peer">
+              <div class="w-11 h-6 bg-slate-600 peer-focus:ring-2 peer-focus:ring-primary-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-500"></div>
+            </label>
+          </div>
+          <button onclick="saveSettings()" class="w-full bg-primary-500 hover:bg-primary-600 text-white font-semibold py-2 rounded-lg transition">
+            Save Settings
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Config Help Modal -->
+  <div id="config-help-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-800 rounded-xl max-w-2xl w-full max-h-[80vh] overflow-hidden border border-slate-700">
+      <div class="flex items-center justify-between p-4 border-b border-slate-700">
+        <h3 class="text-lg font-semibold flex items-center gap-2">
+          <i data-lucide="info" class="w-5 h-5 text-primary-400"></i>
+          <span id="config-help-title">Configuration Help</span>
+        </h3>
+        <button onclick="closeConfigHelp()" class="p-2 hover:bg-slate-700 rounded-lg transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="p-4 overflow-y-auto max-h-[60vh]">
+        <div id="config-help-content" class="prose prose-invert prose-sm max-w-none">
+          Loading...
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    const API_BASE = window.location.origin + '/api/v1';
+    let ws = null;
+    let reconnectAttempts = 0;
+    let configHelpCache = {};
+
+    function formatBytes(bytes, decimals = 2) {
+      if (bytes === 0) return '0 B';
+      const k = 1024;
+      const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(decimals)) + ' ' + sizes[i];
+    }
+
+    function formatSpeed(bytesPerSec) {
+      return formatBytes(bytesPerSec) + '/s';
+    }
+
+    async function showConfigHelp(component) {
+      const modal = document.getElementById('config-help-modal');
+      const title = document.getElementById('config-help-title');
+      const content = document.getElementById('config-help-content');
+      
+      const componentNames = {
+        cpu: 'CPU Temperature Configuration',
+        gpu: 'GPU Temperature Configuration',
+        memory: 'Memory Temperature Configuration',
+        disk: 'Storage Temperature Configuration',
+        network: 'Network Monitoring Configuration',
+        motherboard: 'Motherboard Temperature Configuration',
+        battery: 'Battery Monitoring Configuration'
+      };
+      
+      title.textContent = componentNames[component] || 'Configuration Help';
+      content.innerHTML = '<p class="text-slate-400">Loading...</p>';
+      modal.classList.remove('hidden');
+      lucide.createIcons();
+      
+      try {
+        if (!configHelpCache[component]) {
+          const res = await fetch(`${API_BASE}/info/config-help/${component}`);
+          const data = await res.json();
+          configHelpCache[component] = data.help;
+        }
+        
+        // Convert markdown-like formatting to HTML
+        let html = configHelpCache[component]
+          .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+          .replace(/`(.+?)`/g, '<code class="bg-slate-700 px-1 rounded text-sm">$1</code>')
+          .replace(/\n\n/g, '</p><p class="mt-3">')
+          .replace(/\n- /g, '</p><li class="ml-4">')
+          .replace(/\n/g, '<br>');
+        
+        content.innerHTML = '<p>' + html + '</p>';
+      } catch (err) {
+        content.innerHTML = '<p class="text-red-400">Failed to load configuration help.</p>';
+      }
+    }
+
+    function closeConfigHelp() {
+      document.getElementById('config-help-modal').classList.add('hidden');
+    }
+
+    function setGaugeValue(id, value) {
+      const gauge = document.getElementById(id);
+      if (gauge) {
+        const circumference = 351.86;
+        const offset = circumference - (value / 100) * circumference;
+        gauge.style.strokeDashoffset = offset;
+      }
+    }
+
+    function updateUI(snapshot) {
+      if (!snapshot) return;
+
+      document.getElementById('status-text').textContent = 
+        `Last update: ${new Date(snapshot.timestamp).toLocaleTimeString()}`;
+
+      if (snapshot.cpu) {
+        document.getElementById('cpu-name').textContent = snapshot.cpu.brand || 'Unknown CPU';
+        document.getElementById('cpu-load').textContent = Math.round(snapshot.cpu.load || 0);
+        document.getElementById('cpu-temp').textContent = `${Math.round(snapshot.cpu.temperature || 0)} °C`;
+        document.getElementById('cpu-speed').textContent = `${(snapshot.cpu.speed || 0).toFixed(2)} GHz`;
+        setGaugeValue('cpu-gauge', snapshot.cpu.load || 0);
+      }
+
+      if (snapshot.gpu && snapshot.gpu.length > 0) {
+        const gpuSelect = document.getElementById('gpu-select');
+        const selectedGpuIndex = parseInt(gpuSelect.value) || 0;
+        
+        if (gpuSelect.options.length !== snapshot.gpu.length) {
+          gpuSelect.innerHTML = snapshot.gpu.map((g, i) => 
+            `<option value="${i}">${g.vendor ? g.vendor.toUpperCase() + ' ' : ''}GPU ${i}</option>`
+          ).join('');
+          gpuSelect.value = selectedGpuIndex < snapshot.gpu.length ? selectedGpuIndex : 0;
+        }
+        
+        document.getElementById('gpu-count').textContent = `${snapshot.gpu.length} GPU(s)`;
+        
+        const gpu = snapshot.gpu[Math.min(selectedGpuIndex, snapshot.gpu.length - 1)];
+        const vendorBadge = gpu.vendor ? `<span class="text-xs px-1 rounded ${gpu.vendor === 'nvidia' ? 'bg-green-600' : gpu.vendor === 'amd' ? 'bg-red-600' : 'bg-blue-600'}">${gpu.vendor.toUpperCase()}</span> ` : '';
+        document.getElementById('gpu-name').innerHTML = vendorBadge + (gpu.model || 'Unknown GPU');
+        document.getElementById('gpu-load').textContent = Math.round(gpu.utilizationGpu || 0);
+        document.getElementById('gpu-temp').textContent = `${Math.round(gpu.temperature || 0)} °C`;
+        
+        // Show memory in MB or GB based on size
+        const vramMB = gpu.memoryTotal || gpu.vram || 0;
+        const vramDisplay = vramMB >= 1024 ? `${(vramMB / 1024).toFixed(1)} GB` : `${Math.round(vramMB)} MB`;
+        document.getElementById('gpu-vram').textContent = vramDisplay;
+        setGaugeValue('gpu-gauge', gpu.utilizationGpu || 0);
+      }
+
+      if (snapshot.memory) {
+        const usedGB = snapshot.memory.used / (1024 * 1024 * 1024);
+        const totalGB = snapshot.memory.total / (1024 * 1024 * 1024);
+        document.getElementById('memory-info').textContent = `${usedGB.toFixed(1)} / ${totalGB.toFixed(1)} GB`;
+        document.getElementById('memory-load').textContent = Math.round(snapshot.memory.usedPercent || 0);
+        document.getElementById('memory-used').textContent = `${usedGB.toFixed(1)} GB`;
+        document.getElementById('memory-total').textContent = `${totalGB.toFixed(1)} GB`;
+        setGaugeValue('memory-gauge', snapshot.memory.usedPercent || 0);
+      }
+
+      if (snapshot.disks && snapshot.disks.length > 0) {
+        const diskSelect = document.getElementById('disk-select');
+        const selectedDisk = diskSelect.value;
+        
+        if (diskSelect.options.length !== snapshot.disks.length + 1) {
+          diskSelect.innerHTML = '<option value="all">All Drives</option>' + 
+            snapshot.disks.map((d, i) => 
+              `<option value="${i}">${d.mount || d.name}</option>`
+            ).join('');
+          diskSelect.value = selectedDisk;
+        }
+        
+        document.getElementById('disk-info').textContent = `${snapshot.disks.length} drive(s)`;
+        
+        let totalSize = 0, totalUsed = 0, diskName = 'All Drives';
+        
+        if (selectedDisk === 'all') {
+          snapshot.disks.forEach(d => {
+            totalSize += d.size || 0;
+            totalUsed += d.used || 0;
+          });
+        } else {
+          const diskIndex = parseInt(selectedDisk);
+          if (diskIndex >= 0 && diskIndex < snapshot.disks.length) {
+            const disk = snapshot.disks[diskIndex];
+            totalSize = disk.size || 0;
+            totalUsed = disk.used || 0;
+            diskName = disk.mount || disk.name;
+          }
+        }
+        
+        const usedPercent = totalSize > 0 ? (totalUsed / totalSize) * 100 : 0;
+        document.getElementById('disk-name').textContent = diskName;
+        document.getElementById('disk-load').textContent = Math.round(usedPercent);
+        document.getElementById('disk-used').textContent = formatBytes(totalUsed);
+        document.getElementById('disk-total').textContent = formatBytes(totalSize);
+        setGaugeValue('disk-gauge', usedPercent);
+      }
+
+      if (snapshot.network && snapshot.network.length > 0) {
+        let totalRx = 0, totalTx = 0, rxSec = 0, txSec = 0;
+        snapshot.network.forEach(n => {
+          totalRx += n.rxBytes || 0;
+          totalTx += n.txBytes || 0;
+          rxSec += n.rxSec || 0;
+          txSec += n.txSec || 0;
+        });
+        document.getElementById('net-download').textContent = formatSpeed(rxSec);
+        document.getElementById('net-upload').textContent = formatSpeed(txSec);
+        document.getElementById('net-total-rx').textContent = formatBytes(totalRx);
+        document.getElementById('net-total-tx').textContent = formatBytes(totalTx);
+      }
+
+      if (snapshot.bluetooth) {
+        const list = document.getElementById('bluetooth-list');
+        if (snapshot.bluetooth.length > 0) {
+          list.innerHTML = snapshot.bluetooth.map(d => `
+            <div class="flex items-center justify-between bg-slate-700/50 rounded-lg p-3">
+              <div class="flex items-center gap-3">
+                <i data-lucide="bluetooth" class="w-4 h-4 ${d.connected ? 'text-blue-400' : 'text-slate-500'}"></i>
+                <span>${d.name || 'Unknown Device'}</span>
+              </div>
+              <span class="text-xs ${d.connected ? 'text-green-400' : 'text-slate-500'}">${d.connected ? 'Connected' : 'Paired'}</span>
+            </div>
+          `).join('');
+          lucide.createIcons();
+        } else {
+          list.innerHTML = '<p class="text-slate-400 text-sm">No devices found</p>';
+        }
+      }
+
+      if (snapshot.audio) {
+        const list = document.getElementById('audio-list');
+        if (snapshot.audio.length > 0) {
+          list.innerHTML = snapshot.audio.map(d => `
+            <div class="flex items-center justify-between bg-slate-700/50 rounded-lg p-3">
+              <div class="flex items-center gap-3">
+                <i data-lucide="${d.type === 'input' ? 'mic' : 'speaker'}" class="w-4 h-4 ${d.default ? 'text-pink-400' : 'text-slate-400'}"></i>
+                <span class="truncate max-w-[200px]">${d.name}</span>
+              </div>
+              <span class="text-xs text-slate-400">${d.type}</span>
+            </div>
+          `).join('');
+          lucide.createIcons();
+        } else {
+          list.innerHTML = '<p class="text-slate-400 text-sm">No devices found</p>';
+        }
+      }
+
+      if (snapshot.usb) {
+        const list = document.getElementById('usb-list');
+        if (snapshot.usb.length > 0) {
+          list.innerHTML = snapshot.usb.slice(0, 10).map(d => `
+            <div class="flex items-center gap-3 bg-slate-700/50 rounded-lg p-2 text-sm">
+              <i data-lucide="usb" class="w-4 h-4 text-slate-400"></i>
+              <span class="truncate">${d.name || 'Unknown USB Device'}</span>
+            </div>
+          `).join('');
+          lucide.createIcons();
+        } else {
+          list.innerHTML = '<p class="text-slate-400 text-sm">No devices found</p>';
+        }
+      }
+
+      if (snapshot.processes) {
+        const list = document.getElementById('process-list');
+        const sorted = [...snapshot.processes].sort((a, b) => b.cpu - a.cpu).slice(0, 8);
+        list.innerHTML = sorted.map(p => `
+          <div class="flex items-center justify-between bg-slate-700/50 rounded-lg p-2 text-sm">
+            <span class="truncate max-w-[150px]">${p.name}</span>
+            <div class="flex gap-4">
+              <span class="text-blue-400">${p.cpu.toFixed(1)}% CPU</span>
+              <span class="text-purple-400">${p.mem.toFixed(1)}% RAM</span>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      if (snapshot.system) {
+        document.getElementById('sys-manufacturer').textContent = snapshot.system.manufacturer || '--';
+        document.getElementById('sys-model').textContent = snapshot.system.model || '--';
+      }
+      if (snapshot.os) {
+        document.getElementById('sys-os').textContent = `${snapshot.os.distro} ${snapshot.os.release}`;
+        document.getElementById('sys-hostname').textContent = snapshot.os.hostname || '--';
+        document.getElementById('sys-arch').textContent = snapshot.os.arch || '--';
+      }
+      if (snapshot.motherboard) {
+        document.getElementById('sys-motherboard').textContent = 
+          `${snapshot.motherboard.manufacturer} ${snapshot.motherboard.model}`;
+      }
+      if (snapshot.bios) {
+        document.getElementById('sys-bios').textContent = 
+          `${snapshot.bios.vendor} ${snapshot.bios.version}`;
+      }
+    }
+
+    function connectWebSocket() {
+      const wsUrl = `ws://${window.location.host}`;
+      ws = new WebSocket(wsUrl);
+
+      ws.onopen = () => {
+        console.log('WebSocket connected');
+        document.getElementById('connection-indicator').classList.remove('bg-red-500');
+        document.getElementById('connection-indicator').classList.add('bg-green-500');
+        document.getElementById('connection-status').textContent = 'Connected';
+        reconnectAttempts = 0;
+
+        ws.send(JSON.stringify({ type: 'subscribe', channels: ['snapshot', 'alerts'] }));
+      };
+
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.type === 'snapshot') {
+          updateUI(data.data);
+        } else if (data.type === 'alert') {
+          showAlert(data.data);
+        }
+      };
+
+      ws.onclose = () => {
+        document.getElementById('connection-indicator').classList.remove('bg-green-500');
+        document.getElementById('connection-indicator').classList.add('bg-red-500');
+        document.getElementById('connection-status').textContent = 'Disconnected';
+        
+        reconnectAttempts++;
+        const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000);
+        setTimeout(connectWebSocket, delay);
+      };
+
+      ws.onerror = (err) => {
+        console.error('WebSocket error:', err);
+      };
+    }
+
+    function showAlert(alert) {
+      const list = document.getElementById('alerts-list');
+      const alertEl = document.createElement('div');
+      alertEl.className = 'bg-red-500/20 border border-red-500/50 rounded-lg p-3 text-sm';
+      alertEl.innerHTML = `
+        <div class="flex items-center justify-between">
+          <span class="font-semibold">${alert.alertName}</span>
+          <span class="text-xs text-slate-400">${new Date(alert.timestamp).toLocaleTimeString()}</span>
+        </div>
+        <p class="text-slate-300 mt-1">Value: ${alert.value} (threshold: ${alert.threshold})</p>
+      `;
+      list.prepend(alertEl);
+      
+      if (list.children.length > 5) {
+        list.removeChild(list.lastChild);
+      }
+    }
+
+    async function fetchInitialData() {
+      try {
+        const response = await fetch(`${API_BASE}/snapshot`);
+        const data = await response.json();
+        updateUI(data);
+      } catch (err) {
+        console.error('Failed to fetch initial data:', err);
+      }
+    }
+
+    function openSettings() {
+      document.getElementById('settings-modal').classList.remove('hidden');
+      document.getElementById('settings-modal').classList.add('flex');
+    }
+
+    function closeSettings() {
+      document.getElementById('settings-modal').classList.add('hidden');
+      document.getElementById('settings-modal').classList.remove('flex');
+    }
+
+    async function saveSettings() {
+      const settings = {
+        pollingInterval: parseInt(document.getElementById('setting-polling').value),
+        apiPort: parseInt(document.getElementById('setting-port').value),
+        enableAuth: document.getElementById('setting-auth').checked,
+        enableAlerts: document.getElementById('setting-alerts').checked
+      };
+
+      try {
+        await fetch(`${API_BASE}/config`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(settings)
+        });
+        closeSettings();
+      } catch (err) {
+        console.error('Failed to save settings:', err);
+      }
+    }
+
+    function toggleTheme() {
+      document.documentElement.classList.toggle('dark');
+    }
+
+    fetchInitialData();
+    connectWebSocket();
+    setInterval(fetchInitialData, 5000);
+  </script>
+</body>
+</html>

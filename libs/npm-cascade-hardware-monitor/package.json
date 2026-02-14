@@ -1,0 +1,54 @@
+{
+  "name": "cascade-hardware-monitor",
+  "version": "1.0.0",
+  "description": "Modern, AI-friendly hardware monitoring library. Superior alternative to OpenHardwareMonitor with cross-platform support (Windows, macOS, Linux) and AI integration.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "hardware",
+    "monitoring",
+    "cpu",
+    "gpu",
+    "temperature",
+    "sensors",
+    "nvidia",
+    "amd",
+    "intel",
+    "apple-silicon",
+    "ai",
+    "machine-learning",
+    "system-monitor",
+    "cross-platform",
+    "openhardwaremonitor-alternative"
+  ],
+  "author": "TantuLabs <contact@tantulabs.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tantulabs/cascade-hardware-monitor"
+  },
+  "homepage": "https://tantulabs-cascade.web.app",
+  "bugs": {
+    "url": "https://github.com/tantulabs/cascade-hardware-monitor/issues"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0",
+    "@types/ws": "^8.5.0"
+  },
+  "dependencies": {
+    "ws": "^8.14.0"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ]
+}

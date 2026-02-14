@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cascade Hardware Monitor - API Documentation</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <style>
+    .endpoint-card { transition: all 0.2s; }
+    .endpoint-card:hover { transform: translateX(4px); }
+    .method-get { background: #22c55e; }
+    .method-post { background: #3b82f6; }
+    .method-put { background: #f59e0b; }
+    .method-delete { background: #ef4444; }
+    pre code { font-size: 13px !important; }
+    .tab-active { border-bottom: 2px solid #0ea5e9; color: #0ea5e9; }
+  </style>
+</head>
+<body class="bg-slate-900 text-white min-h-screen">
+  <nav class="bg-slate-800 border-b border-slate-700 px-6 py-4 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="/" class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-lg flex items-center justify-center">
+            <i data-lucide="book-open" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold">API Documentation</h1>
+            <p class="text-xs text-slate-400">Cascade Hardware Monitor v1.0.0</p>
+          </div>
+        </a>
+      </div>
+      <div class="flex items-center gap-4">
+        <a href="/" class="text-sm text-slate-400 hover:text-white">Dashboard</a>
+        <a href="#playground" class="text-sm text-slate-400 hover:text-white">Playground</a>
+        <a href="#websocket" class="text-sm text-slate-400 hover:text-white">WebSocket</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="max-w-7xl mx-auto px-6 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <!-- Sidebar -->
+      <aside class="lg:col-span-1">
+        <div class="sticky top-24 space-y-6">
+          <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">
+            <h3 class="font-semibold mb-3 flex items-center gap-2">
+              <i data-lucide="server" class="w-4 h-4"></i> Base URL
+            </h3>
+            <code class="text-sm bg-slate-700 px-3 py-2 rounded block break-all" id="base-url">http://localhost:8085/api/v1</code>
+          </div>
+          
+          <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">
+            <h3 class="font-semibold mb-3">Endpoints</h3>
+            <nav class="space-y-1 text-sm" id="endpoint-nav"></nav>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="lg:col-span-3 space-y-8">
+        <!-- Introduction -->
+        <section class="bg-slate-800 rounded-xl p-6 border border-slate-700">
+          <h2 class="text-2xl font-bold mb-4">Getting Started</h2>
+          <p class="text-slate-300 mb-4">
+            The Cascade Hardware Monitor API provides comprehensive access to system hardware data including CPU, GPU, memory, storage, network, and more. All endpoints return JSON data.
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+            <div class="bg-slate-700/50 rounded-lg p-4">
+              <div class="flex items-center gap-2 mb-2">
+                <i data-lucide="zap" class="w-5 h-5 text-yellow-400"></i>
+                <span class="font-semibold">Real-time</span>
+              </div>
+              <p class="text-sm text-slate-400">WebSocket support for live data streaming</p>
+            </div>
+            <div class="bg-slate-700/50 rounded-lg p-4">
+              <div class="flex items-center gap-2 mb-2">
+                <i data-lucide="shield" class="w-5 h-5 text-green-400"></i>
+                <span class="font-semibold">Secure</span>
+              </div>
+              <p class="text-sm text-slate-400">Optional API key authentication</p>
+            </div>
+            <div class="bg-slate-700/50 rounded-lg p-4">
+              <div class="flex items-center gap-2 mb-2">
+                <i data-lucide="gauge" class="w-5 h-5 text-blue-400"></i>
+                <span class="font-semibold">Fast</span>
+              </div>
+              <p class="text-sm text-slate-400">Rate limited to 100 req/min</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Endpoints -->
+        <section id="endpoints" class="space-y-4"></section>
+
+        <!-- Playground -->
+        <section id="playground" class="bg-slate-800 rounded-xl p-6 border border-slate-700">
+          <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
+            <i data-lucide="play-circle" class="w-6 h-6 text-green-400"></i>
+            API Playground
+          </h2>
+          <div class="space-y-4">
+            <div class="flex gap-4">
+              <select id="play-method" class="bg-slate-700 border border-slate-600 rounded-lg px-4 py-2">
+                <option value="GET">GET</option>
+                <option value="POST">POST</option>
+                <option value="PUT">PUT</option>
+                <option value="DELETE">DELETE</option>
+              </select>
+              <input type="text" id="play-endpoint" value="/health" 
+                     class="flex-1 bg-slate-700 border border-slate-600 rounded-lg px-4 py-2"
+                     placeholder="/endpoint">
+              <button onclick="executeRequest()" class="bg-green-600 hover:bg-green-700 px-6 py-2 rounded-lg font-semibold transition">
+                Send
+              </button>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">Request Body (JSON)</label>
+              <textarea id="play-body" rows="4" 
+                        class="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 font-mono text-sm"
+                        placeholder='{"key": "value"}'></textarea>
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <label class="text-sm font-medium">Response</label>
+                <span id="play-status" class="text-sm"></span>
+              </div>
+              <pre class="bg-slate-900 rounded-lg p-4 overflow-auto max-h-96"><code id="play-response" class="language-json">// Response will appear here</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- WebSocket -->
+        <section id="websocket" class="bg-slate-800 rounded-xl p-6 border border-slate-700">
+          <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
+            <i data-lucide="radio" class="w-6 h-6 text-purple-400"></i>
+            WebSocket API
+          </h2>
+          <p class="text-slate-300 mb-4">Connect to <code class="bg-slate-700 px-2 py-1 rounded">ws://localhost:8085</code> for real-time updates.</p>
+          
+          <div class="space-y-4">
+            <div class="bg-slate-700/50 rounded-lg p-4">
+              <h4 class="font-semibold mb-2">Subscribe to channels</h4>
+              <pre><code class="language-json">{
+  "type": "subscribe",
+  "channels": ["snapshot", "alerts", "readings"]
+}</code></pre>
+            </div>
+            <div class="bg-slate-700/50 rounded-lg p-4">
+              <h4 class="font-semibold mb-2">Request specific data</h4>
+              <pre><code class="language-json">{
+  "type": "get",
+  "resource": "cpu"
+}</code></pre>
+            </div>
+            <div class="bg-slate-700/50 rounded-lg p-4">
+              <h4 class="font-semibold mb-2">Live WebSocket Test</h4>
+              <div class="flex gap-2 mb-2">
+                <button onclick="connectWS()" id="ws-connect" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg text-sm">Connect</button>
+                <button onclick="disconnectWS()" id="ws-disconnect" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-sm" disabled>Disconnect</button>
+              </div>
+              <pre class="bg-slate-900 rounded-lg p-4 overflow-auto max-h-48"><code id="ws-log" class="text-sm">// WebSocket messages will appear here</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- Code Examples -->
+        <section id="examples" class="bg-slate-800 rounded-xl p-6 border border-slate-700">
+          <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
+            <i data-lucide="code-2" class="w-6 h-6 text-cyan-400"></i>
+            Code Examples
+          </h2>
+          <div class="flex gap-2 mb-4 border-b border-slate-700">
+            <button onclick="showExample('js')" class="px-4 py-2 tab-active" id="tab-js">JavaScript</button>
+            <button onclick="showExample('python')" class="px-4 py-2 text-slate-400 hover:text-white" id="tab-python">Python</button>
+            <button onclick="showExample('curl')" class="px-4 py-2 text-slate-400 hover:text-white" id="tab-curl">cURL</button>
+            <button onclick="showExample('csharp')" class="px-4 py-2 text-slate-400 hover:text-white" id="tab-csharp">C#</button>
+          </div>
+          <div id="example-content"></div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+    hljs.highlightAll();
+
+    const API_BASE = window.location.origin + '/api/v1';
+    let testWs = null;
+
+    const endpoints = [
+      { category: 'System', endpoints: [
+        { method: 'GET', path: '/health', desc: 'Health check and uptime', response: '{"status":"ok","timestamp":1234567890,"uptime":3600,"version":"1.0.0"}' },
+        { method: 'GET', path: '/status', desc: 'Full system status', response: '{"monitoring":true,"alerts":2,"plugins":1,"config":{...}}' },
+        { method: 'GET', path: '/snapshot', desc: 'Complete hardware snapshot', response: '{"timestamp":...,"cpu":{...},"gpu":[...],"memory":{...},...}' },
+        { method: 'GET', path: '/snapshot/live', desc: 'Force fresh data poll', response: '{"timestamp":...,...}' },
+      ]},
+      { category: 'CPU', endpoints: [
+        { method: 'GET', path: '/cpu', desc: 'CPU data with all cores', response: '{"manufacturer":"Intel","brand":"Core i9","cores":16,"load":45.2,...}' },
+        { method: 'GET', path: '/cpu/socket/:socketId', desc: 'Specific CPU socket data', response: '{"socketId":0,"cores":8,"temperature":65,...}' },
+        { method: 'GET', path: '/cpu/core/:coreId', desc: 'Specific core data', response: '{"coreId":0,"temperature":62,"load":55,...}' },
+      ]},
+      { category: 'GPU', endpoints: [
+        { method: 'GET', path: '/gpu', desc: 'All GPUs basic data', response: '[{"index":0,"vendor":"nvidia","model":"RTX 4090",...}]' },
+        { method: 'GET', path: '/gpu/enhanced', desc: 'Enhanced vendor-specific GPU data', response: '[{"index":0,"vendor":"nvidia","cudaVersion":"12.4",...}]' },
+        { method: 'GET', path: '/gpu/:index', desc: 'Specific GPU by index', response: '{"index":0,"vendor":"nvidia","temperature":65,...}' },
+        { method: 'GET', path: '/gpu/system', desc: 'GPU system info (drivers, CUDA)', response: '{"nvidia":{"driverVersion":"555.42","cudaVersion":"12.4"},...}' },
+        { method: 'GET', path: '/gpu/vendors', desc: 'Available GPU vendors', response: '{"available":["nvidia","intel"],"initialized":true}' },
+        { method: 'GET', path: '/gpu/:index/processes', desc: 'Processes using GPU', response: '[{"pid":1234,"name":"chrome.exe","memoryUsed":512}]' },
+        { method: 'GET', path: '/gpu/nvidia/raw', desc: 'Raw NVIDIA SMI data', response: '[{"uuid":"GPU-xxx","powerDraw":250,...}]' },
+        { method: 'GET', path: '/gpu/amd/raw', desc: 'Raw AMD ROCm data', response: '[{"temperatureJunction":85,...}]' },
+        { method: 'GET', path: '/gpu/intel/raw', desc: 'Raw Intel GPU data', response: '[{"euCount":96,...}]' },
+      ]},
+      { category: 'Memory', endpoints: [
+        { method: 'GET', path: '/memory', desc: 'Memory usage and modules', response: '{"total":34359738368,"used":17179869184,"usedPercent":50,...}' },
+      ]},
+      { category: 'Storage', endpoints: [
+        { method: 'GET', path: '/disks', desc: 'All storage drives', response: '[{"index":0,"mount":"C:","size":500000000000,...}]' },
+        { method: 'GET', path: '/disks/:index', desc: 'Specific drive by index', response: '{"index":0,"temperature":35,...}' },
+      ]},
+      { category: 'Network', endpoints: [
+        { method: 'GET', path: '/network', desc: 'All network interfaces', response: '[{"iface":"eth0","ip4":"192.168.1.100",...}]' },
+        { method: 'GET', path: '/network/:iface', desc: 'Specific interface', response: '{"iface":"eth0","rxSec":1024000,...}' },
+      ]},
+      { category: 'Other Hardware', endpoints: [
+        { method: 'GET', path: '/bluetooth', desc: 'Bluetooth devices', response: '[{"name":"AirPods","connected":true,...}]' },
+        { method: 'GET', path: '/audio', desc: 'Audio devices', response: '[{"name":"Speakers","type":"output",...}]' },
+        { method: 'GET', path: '/battery', desc: 'Battery status', response: '{"percent":85,"isCharging":true,...}' },
+        { method: 'GET', path: '/usb', desc: 'USB devices', response: '[{"name":"USB Drive","type":"storage",...}]' },
+        { method: 'GET', path: '/processes', desc: 'Top processes by CPU/RAM', response: '[{"name":"chrome","cpu":15.2,"mem":8.5}]' },
+        { method: 'GET', path: '/system', desc: 'System manufacturer info', response: '{"manufacturer":"Dell","model":"XPS 15",...}' },
+      ]},
+      { category: 'Alerts', endpoints: [
+        { method: 'GET', path: '/alerts', desc: 'List all alerts', response: '[{"id":"abc123","name":"High CPU",...}]' },
+        { method: 'POST', path: '/alerts', desc: 'Create new alert', body: '{"name":"High Temp","sensorPath":"cpu.temperature","condition":"above","thresholdMax":80}', response: '{"id":"new123",...}' },
+        { method: 'PUT', path: '/alerts/:id', desc: 'Update alert', body: '{"enabled":false}', response: '{"id":"abc123",...}' },
+        { method: 'DELETE', path: '/alerts/:id', desc: 'Delete alert', response: '{"success":true}' },
+      ]},
+      { category: 'Configuration', endpoints: [
+        { method: 'GET', path: '/config', desc: 'Get current config', response: '{"pollingInterval":1000,"enabledSensors":[...],...}' },
+        { method: 'PUT', path: '/config', desc: 'Update config', body: '{"pollingInterval":500}', response: '{"pollingInterval":500,...}' },
+        { method: 'GET', path: '/plugins', desc: 'List loaded plugins', response: '[{"id":"nvidia-smi","name":"NVIDIA SMI",...}]' },
+      ]},
+      { category: 'Optimization', endpoints: [
+        { method: 'GET', path: '/optimization/profiles', desc: 'List optimization profiles', response: '{"profiles":[...],"current":"balanced"}' },
+        { method: 'POST', path: '/optimization/profiles/:name', desc: 'Apply profile', response: '{"success":true,"profile":"performance"}' },
+        { method: 'GET', path: '/optimization/analyze', desc: 'Analyze resource usage', response: '{"cpuUsage":45,"recommendation":"balanced"}' },
+      ]},
+      { category: 'History', endpoints: [
+        { method: 'GET', path: '/history', desc: 'Query historical data', response: '[{"timestamp":123,"readings":{...}}]' },
+        { method: 'GET', path: '/history/sensor/:path', desc: 'Sensor history', response: '[{"timestamp":123,"value":65}]' },
+        { method: 'GET', path: '/history/latest', desc: 'Latest readings', response: '{"cpu.load":45,"gpu.0.temp":65,...}' },
+        { method: 'DELETE', path: '/history', desc: 'Clear history', response: '{"success":true}' },
+      ]},
+      { category: 'Info', endpoints: [
+        { method: 'GET', path: '/info/bios', desc: 'BIOS/motherboard info', response: '{"bios":{"vendor":"AMI",...},"motherboard":{...}}' },
+        { method: 'GET', path: '/info/temperatures', desc: 'All temperature readings', response: '{"cpu":{"main":65},"gpu":[...],...}' },
+        { method: 'GET', path: '/info/config-help/:component', desc: 'Config help for component', response: '{"component":"cpu","help":"..."}' },
+      ]},
+      { category: 'AI Integration', endpoints: [
+        { method: 'GET', path: '/ai/status', desc: 'AI-friendly system status with health scores', response: '{"timestamp":...,"system":{"healthy":true},"summary":{...},"capabilities":{...},"actions":[...]}' },
+        { method: 'GET', path: '/ai/analysis', desc: 'Semantic analysis with recommendations', response: '{"recommendations":[...],"warnings":[...],"metrics":{"overallHealth":95,...}}' },
+        { method: 'GET', path: '/ai/actions', desc: 'List available AI actions', response: '{"actions":[{"id":"set_power_profile","name":"Set Power Profile",...}],"capabilities":{...}}' },
+        { method: 'POST', path: '/ai/action', desc: 'Execute an AI action', body: '{"action":"set_power_profile","params":{"profileId":"xxx"}}', response: '{"success":true,"message":"Power profile changed"}' },
+      ]},
+      { category: 'Hardware Control', endpoints: [
+        { method: 'GET', path: '/ai/control/power-profiles', desc: 'List Windows power profiles', response: '[{"id":"xxx","name":"Balanced","active":true}]' },
+        { method: 'POST', path: '/ai/control/power-profiles/:id', desc: 'Set active power profile', response: '{"success":true}' },
+        { method: 'GET', path: '/ai/control/gpu-power', desc: 'Get GPU power limits (NVIDIA)', response: '[{"gpuIndex":0,"currentLimit":350,"minLimit":100,"maxLimit":400}]' },
+        { method: 'POST', path: '/ai/control/gpu-power/:index', desc: 'Set GPU power limit', body: '{"powerLimit":300}', response: '{"success":true}' },
+        { method: 'GET', path: '/ai/control/brightness', desc: 'Get display brightness (Win/macOS)', response: '{"brightness":75}' },
+        { method: 'POST', path: '/ai/control/brightness', desc: 'Set display brightness (Win/macOS)', body: '{"level":50}', response: '{"success":true}' },
+        { method: 'POST', path: '/ai/control/process/:pid/priority', desc: 'Set process priority', body: '{"priority":"high"}', response: '{"success":true}' },
+        { method: 'POST', path: '/ai/control/process/:pid/affinity', desc: 'Set CPU affinity (Windows)', body: '{"cpuMask":15}', response: '{"success":true}' },
+        { method: 'DELETE', path: '/ai/control/process/:pid', desc: 'Kill process', response: '{"success":true}' },
+      ]},
+      { category: 'macOS Controls', endpoints: [
+        { method: 'GET', path: '/gpu/apple/raw', desc: 'Apple GPU data (Metal, Apple Silicon)', response: '[{"name":"Apple M2 Pro","metalVersion":"Metal 3",...}]' },
+        { method: 'POST', path: '/ai/action', desc: 'Set volume (macOS)', body: '{"action":"set_volume","params":{"level":50}}', response: '{"success":true}' },
+        { method: 'POST', path: '/ai/action', desc: 'Set mute (macOS)', body: '{"action":"set_muted","params":{"muted":true}}', response: '{"success":true}' },
+        { method: 'POST', path: '/ai/action', desc: 'Toggle dark mode (macOS)', body: '{"action":"set_dark_mode","params":{"enabled":true}}', response: '{"success":true}' },
+        { method: 'POST', path: '/ai/action', desc: 'Prevent sleep (macOS/Win)', body: '{"action":"prevent_sleep","params":{}}', response: '{"success":true,"pid":1234}' },
+        { method: 'POST', path: '/ai/action', desc: 'Allow sleep (macOS)', body: '{"action":"allow_sleep","params":{"pid":1234}}', response: '{"success":true}' },
+      ]},
+      { category: 'Advanced Hardware', endpoints: [
+        { method: 'GET', path: '/advanced', desc: 'All advanced hardware data (VRM, chipset, PCIe, power rails)', response: '{"vrm":{...},"chipset":{...},"pcieBandwidth":[...],"powerDelivery":{...}}' },
+        { method: 'GET', path: '/advanced/vrm', desc: 'VRM temperature and power data', response: '{"temperature":45,"voltage":1.2,"phases":8}' },
+        { method: 'GET', path: '/advanced/chipset', desc: 'Chipset/PCH temperature', response: '{"name":"Z790","pchTemperature":52}' },
+        { method: 'GET', path: '/advanced/pcie', desc: 'PCIe slot bandwidth and link status', response: '[{"slot":"GPU","currentSpeed":"16GT/s","lanes":16,"bandwidthGBps":31.5}]' },
+        { method: 'GET', path: '/advanced/power', desc: 'PSU rail voltages (12V, 5V, 3.3V)', response: '{"rail12v":{"voltage":12.1},"rail5v":{"voltage":5.05}}' },
+        { method: 'GET', path: '/advanced/thermal-zones', desc: 'All thermal zones (Linux/macOS)', response: '[{"name":"zone0","type":"x86_pkg_temp","temperature":55}]' },
+      ]},
+      { category: 'Inferred Metrics', endpoints: [
+        { method: 'GET', path: '/inferred', desc: 'All calculated/inferred metrics', response: '{"thermalHeadroom":{...},"efficiencyScore":{...},"bottleneck":{...},"workloadProfile":{...}}' },
+        { method: 'GET', path: '/inferred/thermal-headroom', desc: 'Thermal headroom before throttling', response: '{"cpu":{"current":65,"max":100,"headroom":35,"throttling":false}}' },
+        { method: 'GET', path: '/inferred/efficiency', desc: 'System efficiency scores', response: '{"overall":78,"cpu":{"score":82,"performancePerWatt":1.2}}' },
+        { method: 'GET', path: '/inferred/bottleneck', desc: 'Bottleneck detection and analysis', response: '{"primaryBottleneck":"cpu","severity":"medium","recommendations":[...]}' },
+        { method: 'GET', path: '/inferred/workload', desc: 'Detected workload profile', response: '{"type":"gaming","confidence":85,"estimatedPowerDraw":280}' },
+        { method: 'GET', path: '/inferred/health', desc: 'Component health predictions', response: '{"cpu":{"healthScore":95},"storage":[{"healthScore":90}],"battery":{...}}' },
+        { method: 'GET', path: '/inferred/balance', desc: 'System balance analysis', response: '{"cpuGpuBalance":85,"overallBalance":80,"imbalances":[...]}' },
+      ]},
+    ];
+
+    const codeExamples = {
+      js: `// JavaScript - AI Integration Example
+const API = 'http://localhost:8085/api/v1';
+
+// Get AI-friendly status with health scores
+const status = await fetch(API + '/ai/status').then(r => r.json());
+console.log('System healthy:', status.system.healthy);
+console.log('CPU status:', status.summary.cpu.status);
+
+// Get analysis with recommendations
+const analysis = await fetch(API + '/ai/analysis').then(r => r.json());
+analysis.warnings.forEach(w => console.warn(w));
+analysis.recommendations.forEach(r => console.log('Tip:', r));
+
+// Execute an action (e.g., change power profile)
+const result = await fetch(API + '/ai/action', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    action: 'set_power_profile',
+    params: { profileId: 'your-profile-guid' }
+  })
+}).then(r => r.json());
+
+// WebSocket for real-time monitoring
+const ws = new WebSocket('ws://localhost:8085');
+ws.onmessage = (e) => {
+  const data = JSON.parse(e.data);
+  // AI can react to real-time changes
+  if (data.type === 'snapshot' && data.data.cpu.temperature > 80) {
+    console.log('High temp detected - consider action');
+  }
+};`,
+      python: `# Python - AI Integration Example
+import requests
+import json
+
+API = 'http://localhost:8085/api/v1'
+
+# Get AI status with health assessment
+status = requests.get(f'{API}/ai/status').json()
+print(f"System healthy: {status['system']['healthy']}")
+print(f"Available actions: {len(status['actions'])}")
+
+# Get analysis with AI recommendations
+analysis = requests.get(f'{API}/ai/analysis').json()
+print(f"Overall health: {analysis['metrics']['overallHealth']}%")
+for warning in analysis['warnings']:
+    print(f"WARNING: {warning}")
+
+# Execute hardware control action
+def set_power_profile(profile_id):
+    return requests.post(f'{API}/ai/action', json={
+        'action': 'set_power_profile',
+        'params': {'profileId': profile_id}
+    }).json()
+
+# AI-driven thermal management example
+def manage_thermals():
+    status = requests.get(f'{API}/ai/status').json()
+    cpu = status['summary']['cpu']
+    if cpu and cpu['status'] == 'critical':
+        # Switch to power saver mode
+        profiles = requests.get(f'{API}/ai/control/power-profiles').json()
+        saver = next((p for p in profiles if 'saver' in p['name'].lower()), None)
+        if saver:
+            set_power_profile(saver['id'])
+            print("Switched to power saver due to high temps")`,
+      curl: `# cURL - AI Integration Examples
+
+# Get AI-friendly system status
+curl http://localhost:8085/api/v1/ai/status
+
+# Get AI analysis with recommendations
+curl http://localhost:8085/api/v1/ai/analysis
+
+# List available AI actions
+curl http://localhost:8085/api/v1/ai/actions
+
+# Execute an action (set power profile)
+curl -X POST http://localhost:8085/api/v1/ai/action \\
+  -H "Content-Type: application/json" \\
+  -d '{"action":"set_power_profile","params":{"profileId":"xxx"}}'
+
+# Get power profiles
+curl http://localhost:8085/api/v1/ai/control/power-profiles
+
+# Set GPU power limit (NVIDIA)
+curl -X POST http://localhost:8085/api/v1/ai/control/gpu-power/0 \\
+  -H "Content-Type: application/json" \\
+  -d '{"powerLimit":300}'
+
+# Set process priority
+curl -X POST http://localhost:8085/api/v1/ai/control/process/1234/priority \\
+  -H "Content-Type: application/json" \\
+  -d '{"priority":"high"}'
+
+# Kill a process
+curl -X DELETE http://localhost:8085/api/v1/ai/control/process/1234?force=true
+
+# Create an alert
+curl -X POST http://localhost:8085/api/v1/alerts \\
+  -H "Content-Type: application/json" \\
+  -d '{"name":"High CPU","sensorPath":"cpu.temperature","condition":"above","thresholdMax":80}'
+
+# Update config
+curl -X PUT http://localhost:8085/api/v1/config \\
+  -H "Content-Type: application/json" \\
+  -d '{"pollingInterval":500}'`,
+      csharp: `// C# (HttpClient)
+using System.Net.Http;
+using System.Text.Json;
+
+var client = new HttpClient { BaseAddress = new Uri("http://localhost:8085/api/v1/") };
+
+// Get snapshot
+var response = await client.GetAsync("snapshot");
+var json = await response.Content.ReadAsStringAsync();
+var snapshot = JsonSerializer.Deserialize<JsonElement>(json);
+Console.WriteLine($"CPU: {snapshot.GetProperty("cpu").GetProperty("load")}%");
+
+// Get GPU data
+var gpuResponse = await client.GetAsync("gpu/enhanced");
+var gpuJson = await gpuResponse.Content.ReadAsStringAsync();
+Console.WriteLine(gpuJson);`
+    };
+
+    function renderEndpoints() {
+      const container = document.getElementById('endpoints');
+      const nav = document.getElementById('endpoint-nav');
+      
+      endpoints.forEach(cat => {
+        const section = document.createElement('div');
+        const catId = 'cat-' + cat.category.toLowerCase().replace(/\s+/g, '-');
+        
+        let html = '<h3 class="text-lg font-semibold mb-3 flex items-center gap-2" id="' + catId + '">';
+        html += '<i data-lucide="folder" class="w-5 h-5 text-slate-400"></i>' + cat.category + '</h3>';
+        html += '<div class="space-y-2">';
+        
+        cat.endpoints.forEach(ep => {
+          const bodyAttr = ep.body ? "'" + ep.body.replace(/'/g, "\\'") + "'" : 'null';
+          html += '<div class="endpoint-card bg-slate-700/50 rounded-lg p-4 cursor-pointer" onclick="tryEndpoint(\'' + ep.method + '\', \'' + ep.path + '\', ' + bodyAttr + ')">';
+          html += '<div class="flex items-center gap-3 mb-2">';
+          html += '<span class="method-' + ep.method.toLowerCase() + ' text-xs font-bold px-2 py-1 rounded">' + ep.method + '</span>';
+          html += '<code class="text-sm">' + ep.path + '</code></div>';
+          html += '<p class="text-sm text-slate-400">' + ep.desc + '</p>';
+          html += '<details class="mt-2"><summary class="text-xs text-slate-500 cursor-pointer">Example response</summary>';
+          html += '<pre class="mt-2 text-xs bg-slate-900 p-2 rounded overflow-auto"><code class="language-json">' + ep.response + '</code></pre></details></div>';
+        });
+        
+        html += '</div>';
+        section.innerHTML = html;
+        container.appendChild(section);
+
+        nav.innerHTML += '<a href="#' + catId + '" class="block py-1 text-slate-400 hover:text-white">' + cat.category + '</a>';
+      });
+      
+      lucide.createIcons();
+      hljs.highlightAll();
+    }
+
+    function tryEndpoint(method, path, body) {
+      document.getElementById('play-method').value = method;
+      document.getElementById('play-endpoint').value = path;
+      document.getElementById('play-body').value = body || '';
+      document.getElementById('playground').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    async function executeRequest() {
+      const method = document.getElementById('play-method').value;
+      const endpoint = document.getElementById('play-endpoint').value;
+      const body = document.getElementById('play-body').value;
+      const statusEl = document.getElementById('play-status');
+      const responseEl = document.getElementById('play-response');
+
+      try {
+        const options = { method, headers: { 'Content-Type': 'application/json' } };
+        if (body && (method === 'POST' || method === 'PUT')) {
+          options.body = body;
+        }
+
+        const start = Date.now();
+        const res = await fetch(API_BASE + endpoint, options);
+        const time = Date.now() - start;
+        const data = await res.json();
+
+        const statusClass = res.ok ? 'text-green-400' : 'text-red-400';
+        statusEl.innerHTML = '<span class="' + statusClass + '">' + res.status + '</span> · ' + time + 'ms';
+        responseEl.textContent = JSON.stringify(data, null, 2);
+        hljs.highlightElement(responseEl);
+      } catch (err) {
+        statusEl.innerHTML = '<span class="text-red-400">Error</span>';
+        responseEl.textContent = err.message;
+      }
+    }
+
+    function connectWS() {
+      const log = document.getElementById('ws-log');
+      testWs = new WebSocket('ws://' + window.location.host);
+      
+      testWs.onopen = () => {
+        log.textContent = '✓ Connected\n';
+        document.getElementById('ws-connect').disabled = true;
+        document.getElementById('ws-disconnect').disabled = false;
+        testWs.send(JSON.stringify({ type: 'subscribe', channels: ['snapshot'] }));
+      };
+      
+      testWs.onmessage = (e) => {
+        const data = JSON.parse(e.data);
+        log.textContent += '← ' + data.type + ': ' + JSON.stringify(data.data || data).slice(0, 100) + '...\n';
+        log.scrollTop = log.scrollHeight;
+      };
+      
+      testWs.onclose = () => {
+        log.textContent += '✗ Disconnected\n';
+        document.getElementById('ws-connect').disabled = false;
+        document.getElementById('ws-disconnect').disabled = true;
+      };
+    }
+
+    function disconnectWS() {
+      if (testWs) testWs.close();
+    }
+
+    function showExample(lang) {
+      document.querySelectorAll('[id^="tab-"]').forEach(t => t.classList.remove('tab-active'));
+      document.getElementById('tab-' + lang).classList.add('tab-active');
+      const langClass = lang === 'csharp' ? 'cs' : lang;
+      document.getElementById('example-content').innerHTML = '<pre><code class="language-' + langClass + '">' + codeExamples[lang] + '</code></pre>';
+      hljs.highlightAll();
+    }
+
+    renderEndpoints();
+    showExample('js');
+  </script>
+</body>
+</html>
