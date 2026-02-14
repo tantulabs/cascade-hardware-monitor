@@ -3,53 +3,73 @@
 [![TantuLabs](https://img.shields.io/badge/TantuLabs-Open%20Source-purple)](https://tantulabs-cascade.web.app)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-green)](https://github.com/tantulabs/cascade-hardware-monitor)
+[![Node.js](https://img.shields.io/badge/Node.js-20%2B-green)](https://nodejs.org/)
+[![Gemini AI](https://img.shields.io/badge/Gemini%20AI-Integrated-blue)](https://ai.google.dev/)
 
 > **🌐 Website**: [tantulabs-cascade.web.app](https://tantulabs-cascade.web.app)  
-> **📦 GitHub**: [github.com/tantulabs/cascade-hardware-monitor](https://github.com/tantulabs/cascade-hardware-monitor)
+> **📦 GitHub**: [github.com/tantulabs/cascade-hardware-monitor](https://github.com/tantulabs/cascade-hardware-monitor)  
+> **📥 Downloads**: [Releases](https://github.com/tantulabs/cascade-hardware-monitor/releases)
 
-A comprehensive cross-platform hardware monitoring application with full system monitoring capabilities, AI integration, and external API access. Modern replacement for OpenHardwareMonitor built with 2026 technologies.
+A comprehensive cross-platform hardware monitoring application with full system monitoring capabilities, **Gemini AI integration**, and external API access. Modern replacement for OpenHardwareMonitor built with 2026 technologies.
 
 **By [TantuLabs](https://github.com/tantulabs)** - Building open-source tools for developers and power users.
 
-## Features
+## ✨ Key Features
 
-- **Comprehensive Hardware Monitoring**
-  - CPU: Temperature, load, speed, voltage, power consumption per core
-  - GPU: Temperature, utilization, VRAM, fan speed, clock speeds (NVIDIA/AMD/Intel)
-  - Memory: Usage, modules, speed, timings
-  - Storage: Disk usage, temperature, SMART data, read/write speeds
-  - Network: Ethernet, WiFi, bandwidth monitoring, connection status
-  - Bluetooth: Connected devices, battery levels
-  - Audio: Input/output devices, volume levels
-  - USB: Connected devices, power consumption
-  - Battery: Charge level, health, cycle count
+### 🖥️ Comprehensive Hardware Monitoring
+- **CPU**: Temperature, load, speed, voltage, power consumption per core
+- **GPU**: Temperature, utilization, VRAM, fan speed, clock speeds (NVIDIA/AMD/Intel/Apple Silicon)
+- **Memory**: Usage, modules, speed, timings
+- **Storage**: Disk usage, temperature, SMART data, read/write speeds, NVMe health
+- **Network**: Ethernet, WiFi, bandwidth monitoring, connection status
+- **Motherboard**: SuperIO sensors (Nuvoton, ITE, Fintek), fan control, voltage rails
+- **Bluetooth**: Connected devices, battery levels
+- **Audio**: Input/output devices, volume levels
+- **USB**: Connected devices, power consumption
+- **Battery**: Charge level, health, cycle count
 
-- **External App Integration**
-  - REST API for data access
-  - WebSocket for real-time streaming
-  - Rate limiting and authentication support
-  - JSON responses for easy parsing
+### 🤖 Gemini AI Integration
+- **Health Analysis**: AI-powered assessment of overall system health with actionable recommendations
+- **Thermal Analysis**: Intelligent thermal monitoring with throttling risk prediction
+- **Performance Analysis**: Bottleneck detection and optimization suggestions
+- **Chat Interface**: Ask questions about your hardware in natural language
+- **Encrypted Storage**: API keys stored securely with AES-256-GCM encryption
 
-- **System Tray Application**
-  - Runs in background
-  - Quick access to key metrics
-  - Desktop notifications for alerts
+### 🔌 External App Integration
+- **REST API**: Full hardware data access via HTTP
+- **WebSocket**: Real-time streaming for live dashboards
+- **Rate Limiting**: Built-in protection against abuse
+- **Multi-Language SDKs**: Python, TypeScript/JavaScript, Go, Rust, C#
 
-- **Alert System**
-  - Configurable thresholds for any sensor
-  - Multiple alert conditions (above, below, between, outside range)
-  - Actions: notifications, webhooks, commands, sounds
-  - Cooldown periods to prevent spam
+### 🖱️ System Tray Application
+- Runs in background with minimal resource usage
+- Quick access to key metrics
+- Desktop notifications for alerts
+- Cross-platform (Windows, macOS, Linux)
 
-- **Plugin Architecture**
-  - Extend monitoring capabilities
-  - Custom sensor support
-  - Easy plugin development
+### ⚠️ Smart Alert System
+- Configurable thresholds for any sensor
+- Multiple conditions: above, below, between, outside range
+- Actions: notifications, webhooks, commands, sounds
+- Cooldown periods to prevent spam
 
-- **Modern Web Dashboard**
-  - Real-time updates via WebSocket
-  - Dark theme with beautiful UI
-  - Responsive design
+### 🔧 Hardware Control
+- Power profile switching (Windows)
+- GPU power limit adjustment
+- Display brightness control
+- Volume control (macOS)
+- Dark mode toggle (macOS)
+- Process priority management
+
+### 🧩 Plugin Architecture
+- Extend monitoring capabilities
+- Custom sensor support
+- Easy plugin development with manifest system
+
+### 📊 Modern Web Dashboard
+- Real-time updates via WebSocket
+- Dark theme with beautiful UI
+- Responsive design for all devices
 
 ## Installation
 
@@ -83,7 +103,7 @@ npm run electron
 http://localhost:8085/api/v1
 ```
 
-### Endpoints
+### Core Endpoints
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -101,12 +121,12 @@ http://localhost:8085/api/v1
 | GET | `/usb` | USB devices |
 | GET | `/processes` | Top processes |
 | GET | `/system` | System info |
-| GET | `/sensors` | All sensor readings |
-| GET | `/sensors/:path` | Specific sensor history |
-| GET | `/alerts` | List all alerts |
-| POST | `/alerts` | Create alert |
-| PUT | `/alerts/:id` | Update alert |
-| DELETE | `/alerts/:id` | Delete alert |
+| GET | `/status` | Get full system status |
+
+### GPU Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
 | GET | `/gpu/:index` | Get specific GPU by index |
 | GET | `/gpu/enhanced` | Get enhanced GPU data with vendor-specific metrics |
 | GET | `/gpu/system` | Get GPU system info (drivers, CUDA version, etc.) |
@@ -116,18 +136,52 @@ http://localhost:8085/api/v1
 | GET | `/gpu/nvidia/raw` | Raw NVIDIA SMI data |
 | GET | `/gpu/amd/raw` | Raw AMD ROCm data |
 | GET | `/gpu/intel/raw` | Raw Intel GPU data |
-| GET | `/config` | Get configuration |
-| PUT | `/config` | Update configuration |
-| GET | `/plugins` | List plugins |
-| GET | `/optimization/profiles` | List optimization profiles |
-| POST | `/optimization/profiles/:name` | Apply optimization profile |
-| GET | `/optimization/analyze` | Analyze resource usage |
+
+### AI Endpoints (Gemini)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/ai/gemini/status` | Get Gemini configuration status |
+| POST | `/ai/gemini/configure` | Set API key (body: `{"apiKey": "..."}`) |
+| DELETE | `/ai/gemini/configure` | Remove API key |
+| POST | `/ai/gemini/enable` | Enable Gemini AI |
+| POST | `/ai/gemini/disable` | Disable Gemini AI |
+| PUT | `/ai/gemini/model` | Set model (body: `{"model": "gemini-2.0-flash"}`) |
+| GET | `/ai/gemini/analyze/health` | AI health analysis |
+| GET | `/ai/gemini/analyze/thermals` | AI thermal analysis |
+| GET | `/ai/gemini/analyze/performance` | AI performance analysis |
+| POST | `/ai/gemini/chat` | Chat with AI (body: `{"message": "...", "includeContext": true}`) |
+
+### Alerts & History
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/sensors` | All sensor readings |
+| GET | `/sensors/:path` | Specific sensor history |
+| GET | `/alerts` | List all alerts |
+| POST | `/alerts` | Create alert |
+| PUT | `/alerts/:id` | Update alert |
+| DELETE | `/alerts/:id` | Delete alert |
 | GET | `/history` | Query historical data |
 | GET | `/history/sensor/:path` | Get sensor history |
 | GET | `/history/latest` | Get latest readings |
 | GET | `/history/stats` | Get history statistics |
 | DELETE | `/history` | Clear history |
-| GET | `/status` | Get full system status |
+
+### Settings & Plugins
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/config` | Get configuration |
+| PUT | `/config` | Update configuration |
+| GET | `/plugins` | List plugins |
+| GET | `/settings/monitors` | Get monitor settings |
+| PUT | `/settings/monitors` | Update monitor settings |
+| POST | `/settings/monitors/preset/:name` | Apply preset (minimal/standard/full/gaming/server) |
+| POST | `/settings/monitors/reset` | Reset to defaults |
+| GET | `/optimization/profiles` | List optimization profiles |
+| POST | `/optimization/profiles/:name` | Apply optimization profile |
+| GET | `/optimization/analyze` | Analyze resource usage |
 
 ### WebSocket
 
