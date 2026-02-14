@@ -85,3 +85,6 @@ release/
 *.AppImage
 *.deb
 *.snap
+
+# Website/public files (served separately)
+public/
