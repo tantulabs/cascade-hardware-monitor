@@ -129,6 +129,34 @@ await client.setFanSpeed('nvidia-gpu', 'nvidia-0', 75);
 await client.setBrightness(50);
 ```
 
+## Real-Time WebSocket
+
+```typescript
+import { CascadeWebSocket } from 'cascade-hardware-monitor';
+
+const ws = new CascadeWebSocket();
+
+// Register handlers
+ws.onSnapshot((snapshot) => {
+  console.log(`CPU: ${snapshot.cpu.load}%`);
+});
+
+ws.onAlert((alert) => {
+  console.warn(`Alert: ${alert.message}`);
+});
+
+ws.onConnect(() => {
+  console.log('Connected!');
+  ws.subscribe(['snapshot', 'alerts']);
+});
+
+// Connect
+ws.connect();
+
+// Later: disconnect
+ws.disconnect();
+```
+
 ## Multi-Language Support
 
 Cascade Hardware Monitor also provides client libraries for:
