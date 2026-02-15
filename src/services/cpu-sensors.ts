@@ -186,25 +186,77 @@ class CPUSensorService {
   private getTjMax(brand: string): number | null {
     const brandLower = brand.toLowerCase();
     
-    // Intel TjMax values
+    // Intel TjMax values (2026 hardware support)
     if (brandLower.includes('intel')) {
+      // Intel Core Ultra 200 Series (Arrow Lake, 2024-2026)
+      if (brandLower.includes('core ultra') && brandLower.includes('200')) return 105;
+      if (brandLower.includes('core ultra 9')) return 105;
+      if (brandLower.includes('core ultra 7')) return 105;
+      if (brandLower.includes('core ultra 5')) return 105;
+      // Intel 15th Gen (Arrow Lake-S, 2025-2026)
+      if (brandLower.includes('core') && brandLower.includes('15')) return 105;
+      if (brandLower.includes('i9-15')) return 105;
+      if (brandLower.includes('i7-15')) return 105;
+      if (brandLower.includes('i5-15')) return 105;
+      // Intel 14th Gen (Raptor Lake Refresh)
       if (brandLower.includes('core') && brandLower.includes('14')) return 100;
+      if (brandLower.includes('i9-14')) return 100;
+      if (brandLower.includes('i7-14')) return 100;
+      if (brandLower.includes('i5-14')) return 100;
+      // Intel 13th Gen (Raptor Lake)
       if (brandLower.includes('core') && brandLower.includes('13')) return 100;
+      // Intel 12th Gen (Alder Lake)
       if (brandLower.includes('core') && brandLower.includes('12')) return 100;
+      // Intel 11th Gen (Rocket Lake)
       if (brandLower.includes('core') && brandLower.includes('11')) return 100;
+      // Intel 10th Gen (Comet Lake)
       if (brandLower.includes('core') && brandLower.includes('10')) return 100;
+      // Intel Xeon (server)
+      if (brandLower.includes('xeon w9')) return 100;
+      if (brandLower.includes('xeon w7')) return 100;
+      if (brandLower.includes('xeon w5')) return 100;
       if (brandLower.includes('xeon')) return 100;
       return 100;
     }
     
-    // AMD TjMax values
+    // AMD TjMax values (2026 hardware support)
     if (brandLower.includes('amd')) {
+      // AMD Ryzen 9000 Series (Granite Ridge, Zen 5, 2024-2026)
+      if (brandLower.includes('ryzen 9 9')) return 95;
+      if (brandLower.includes('ryzen 7 9')) return 95;
+      if (brandLower.includes('ryzen 5 9')) return 95;
+      if (brandLower.includes('9950x')) return 95;
+      if (brandLower.includes('9900x')) return 95;
+      if (brandLower.includes('9700x')) return 95;
+      if (brandLower.includes('9600x')) return 95;
+      // AMD Ryzen 8000 Series (Phoenix/Hawk Point, Zen 4)
+      if (brandLower.includes('ryzen 9 8')) return 95;
+      if (brandLower.includes('ryzen 7 8')) return 95;
+      if (brandLower.includes('ryzen 5 8')) return 95;
+      // AMD Ryzen 7000 Series (Raphael, Zen 4)
+      if (brandLower.includes('ryzen 9 7')) return 95;
+      if (brandLower.includes('ryzen 7 7')) return 95;
+      if (brandLower.includes('ryzen 5 7')) return 95;
+      // AMD Threadripper PRO 7000 (Storm Peak)
+      if (brandLower.includes('threadripper pro 7')) return 95;
+      if (brandLower.includes('threadripper')) return 95;
+      // AMD EPYC (server)
+      if (brandLower.includes('epyc 9')) return 96; // Genoa/Bergamo
+      if (brandLower.includes('epyc')) return 96;
+      // Generic Ryzen
       if (brandLower.includes('ryzen 9')) return 95;
       if (brandLower.includes('ryzen 7')) return 95;
       if (brandLower.includes('ryzen 5')) return 95;
-      if (brandLower.includes('threadripper')) return 95;
-      if (brandLower.includes('epyc')) return 96;
       return 95;
+    }
+
+    // Apple Silicon (M-series)
+    if (brandLower.includes('apple')) {
+      if (brandLower.includes('m4')) return 105;
+      if (brandLower.includes('m3')) return 105;
+      if (brandLower.includes('m2')) return 105;
+      if (brandLower.includes('m1')) return 105;
+      return 105;
     }
 
     return null;

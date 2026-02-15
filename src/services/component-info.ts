@@ -26,20 +26,27 @@ To enable CPU temperature readings:
 
   gpu: `**GPU Temperature Monitoring**
 
-**NVIDIA GPUs:**
+**NVIDIA GPUs (RTX 50/40/30 Series, Quadro, Tesla):**
 - Install NVIDIA drivers (nvidia-smi is included)
 - Temperatures are read via nvidia-smi command
+- Supports RTX 5090/5080/5070 (Blackwell, 2025-2026)
+- Supports RTX 4090/4080/4070/4060 (Ada Lovelace)
 - For CUDA metrics, ensure CUDA toolkit is installed
 - Run \`nvidia-smi\` in terminal to verify access
 
-**AMD GPUs:**
+**AMD GPUs (RX 9000/8000/7000 Series, Radeon Pro):**
 - Install AMD drivers with ROCm support
+- Supports RX 9070/9080 (RDNA 4, 2025-2026)
+- Supports RX 8000 series (RDNA 3.5)
+- Supports RX 7900/7800/7700/7600 (RDNA 3)
 - Linux: Install rocm-smi (\`sudo apt install rocm-smi\`)
 - Windows: AMD Adrenalin software provides sensor access
 - Run \`rocm-smi --showtemp\` to verify
 
-**Intel GPUs:**
+**Intel GPUs (Arc B-Series, A-Series):**
 - Install Intel graphics drivers
+- Supports Arc B580/B570 (Battlemage, 2024-2026)
+- Supports Arc A770/A750/A580/A380 (Alchemist)
 - Linux: intel-gpu-tools package (\`sudo apt install intel-gpu-tools\`)
 - Windows: Intel Graphics Command Center
 - For Arc GPUs: Install Intel oneAPI with xpu-smi
@@ -54,7 +61,10 @@ To enable CPU temperature readings:
 Memory temperature monitoring depends on your RAM modules:
 
 **Requirements:**
-- RAM modules with temperature sensors (most DDR4/DDR5 modules have them)
+- RAM modules with temperature sensors (DDR4/DDR5/DDR6 modules)
+- DDR6 (2025-2026): Enhanced thermal sensors with per-bank monitoring
+- DDR5: PMIC (Power Management IC) with integrated thermal sensor
+- DDR4: SPD-based temperature reporting
 - Motherboard with SPD (Serial Presence Detect) support
 - BIOS must expose memory thermal data
 
@@ -74,8 +84,10 @@ Memory temperature monitoring depends on your RAM modules:
 
   disk: `**Storage Temperature Monitoring**
 
-**NVMe SSDs:**
+**NVMe SSDs (PCIe 5.0/6.0):**
 - Temperatures are read via NVMe SMART data
+- PCIe 6.0 SSDs (2025-2026): Up to 128 GB/s, enhanced thermal monitoring
+- PCIe 5.0 SSDs: Up to 14 GB/s sequential read
 - No additional setup required on most systems
 - Use \`nvme smart-log /dev/nvmeX\` on Linux
 

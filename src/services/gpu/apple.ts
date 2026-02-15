@@ -233,7 +233,8 @@ class AppleGPUService {
       'M3 Max': { efficiencyCores: 4, performanceCores: 12, gpuCores: 40, neuralEngineCores: 16 },
       'M4': { efficiencyCores: 4, performanceCores: 6, gpuCores: 10, neuralEngineCores: 16 },
       'M4 Pro': { efficiencyCores: 4, performanceCores: 10, gpuCores: 20, neuralEngineCores: 16 },
-      'M4 Max': { efficiencyCores: 4, performanceCores: 12, gpuCores: 40, neuralEngineCores: 16 },
+      'M4 Max': { efficiencyCores: 4, performanceCores: 14, gpuCores: 40, neuralEngineCores: 16 },
+      'M4 Ultra': { efficiencyCores: 8, performanceCores: 28, gpuCores: 80, neuralEngineCores: 32 },
     };
 
     for (const [chip, info] of Object.entries(chips)) {
