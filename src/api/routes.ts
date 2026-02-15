@@ -8,6 +8,7 @@ import historyRoutes from './history-routes.js';
 import gpuRoutes from './gpu-routes.js';
 import infoRoutes from './info-routes.js';
 import aiRoutes from './ai-routes.js';
+import raspberryPiRoutes from './raspberry-pi-routes.js';
 import { advancedMonitors } from '../services/advanced-monitors.js';
 import { inferredMetrics } from '../services/inferred-metrics.js';
 import { unifiedMonitors } from '../services/unified-monitors.js';
@@ -385,6 +386,7 @@ router.use('/history', historyRoutes);
 router.use('/gpu', gpuRoutes);
 router.use('/info', infoRoutes);
 router.use('/ai', aiRoutes);
+router.use('/raspberry-pi', raspberryPiRoutes);
 
 router.get('/advanced', async (_req: Request, res: Response) => {
   try {

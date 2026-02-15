@@ -5,6 +5,7 @@ import { historyService } from './services/history.js';
 import { apiServer } from './api/server.js';
 import { loadConfig } from './core/config.js';
 import { geminiAI } from './services/gemini-ai.js';
+import { raspberryPiService } from './services/raspberry-pi.js';
 import logger from './core/logger.js';
 
 async function main(): Promise<void> {
@@ -29,6 +30,12 @@ async function main(): Promise<void> {
 
     await geminiAI.initialize();
     logger.info('Gemini AI service initialized');
+
+    const isPi = await raspberryPiService.init();
+    if (isPi) {
+      const piInfo = raspberryPiService.getPiInfo();
+      logger.info(`Raspberry Pi detected: ${piInfo?.model}`);
+    }
 
     logger.info('Cascade Hardware Monitor is running');
     logger.info('API available at http://localhost:8085/api/v1');
