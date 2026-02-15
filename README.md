@@ -87,7 +87,7 @@ A comprehensive cross-platform hardware monitoring application with full system 
 
 Cascade is a **modern replacement** for OpenHardwareMonitor, HWiNFO, and LibreHardwareMonitor:
 
-| Feature | Cascade | OpenHardwareMonitor | HWiNFO | LibreHardwareMonitor |
+| Feature | Cascade Hardware Monitor | OpenHardwareMonitor | HWiNFO | LibreHardwareMonitor |
 |---------|---------|---------------------|--------|----------------------|
 | **Cross-Platform** | ✅ Win/Mac/Linux | ❌ Windows only | ❌ Windows only | ❌ Windows only |
 | **REST API** | ✅ Full JSON API | ❌ None | ⚠️ Shared Memory | ⚠️ WMI only |
