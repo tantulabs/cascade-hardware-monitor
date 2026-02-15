@@ -23,8 +23,11 @@ A comprehensive cross-platform hardware monitoring application with full system 
 | **macOS (Apple Silicon)** | [Cascade Hardware Monitor-1.0.0-mac-arm64.dmg](https://github.com/tantulabs/cascade-hardware-monitor/releases/latest/download/Cascade%20Hardware%20Monitor-1.0.0-mac-arm64.dmg) | ARM64 |
 | **Linux (AppImage)** | [Cascade Hardware Monitor-1.0.0-linux-x86_64.AppImage](https://github.com/tantulabs/cascade-hardware-monitor/releases/latest/download/Cascade%20Hardware%20Monitor-1.0.0-linux-x86_64.AppImage) | x64 |
 | **Linux (Debian)** | [Cascade Hardware Monitor-1.0.0-linux-amd64.deb](https://github.com/tantulabs/cascade-hardware-monitor/releases/latest/download/Cascade%20Hardware%20Monitor-1.0.0-linux-amd64.deb) | x64 |
+| **Raspberry Pi (64-bit)** | [Cascade Hardware Monitor-1.0.0-linux-arm64.deb](https://github.com/tantulabs/cascade-hardware-monitor/releases/latest/download/Cascade%20Hardware%20Monitor-1.0.0-linux-arm64.deb) | ARM64 |
+| **Raspberry Pi (32-bit)** | [Cascade Hardware Monitor-1.0.0-linux-armv7l.deb](https://github.com/tantulabs/cascade-hardware-monitor/releases/latest/download/Cascade%20Hardware%20Monitor-1.0.0-linux-armv7l.deb) | ARMv7l |
 
-> 📦 **All releases**: [github.com/tantulabs/cascade-hardware-monitor/releases](https://github.com/tantulabs/cascade-hardware-monitor/releases)
+> 📦 **All releases**: [github.com/tantulabs/cascade-hardware-monitor/releases](https://github.com/tantulabs/cascade-hardware-monitor/releases)  
+> 🍓 **Raspberry Pi Guide**: [docs/RASPBERRY_PI.md](docs/RASPBERRY_PI.md)
 
 ## ✨ Key Features
 
