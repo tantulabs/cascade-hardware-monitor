@@ -78,9 +78,10 @@ firebase-config.js
 # HWiNFO shared memory config
 hwinfo-config.json
 
-# Electron builder output
+# Electron-builder output
 release/
-*.exe
+release-artifacts/
+dist/*.exe
 *.dmg
 *.AppImage
 *.deb
