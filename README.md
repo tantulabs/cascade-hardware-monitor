@@ -18,11 +18,11 @@ A comprehensive cross-platform hardware monitoring application with full system 
 
 | Platform | Download | Architecture |
 |----------|----------|--------------|
-| **Windows** | [Cascade-Hardware-Monitor-1.0.0-win-x64.exe](https://github.com/tantulabs/cascade-hardware-monitor/releases/latest/download/Cascade-Hardware-Monitor-1.0.0-win-x64.exe) | x64 |
-| **macOS (Intel)** | [Cascade-Hardware-Monitor-1.0.0-mac-x64.dmg](https://github.com/tantulabs/cascade-hardware-monitor/releases/latest/download/Cascade-Hardware-Monitor-1.0.0-mac-x64.dmg) | x64 |
-| **macOS (Apple Silicon)** | [Cascade-Hardware-Monitor-1.0.0-mac-arm64.dmg](https://github.com/tantulabs/cascade-hardware-monitor/releases/latest/download/Cascade-Hardware-Monitor-1.0.0-mac-arm64.dmg) | ARM64 |
-| **Linux (AppImage)** | [Cascade-Hardware-Monitor-1.0.0-linux-x64.AppImage](https://github.com/tantulabs/cascade-hardware-monitor/releases/latest/download/Cascade-Hardware-Monitor-1.0.0-linux-x64.AppImage) | x64 |
-| **Linux (Debian)** | [cascade-hardware-monitor_1.0.0_amd64.deb](https://github.com/tantulabs/cascade-hardware-monitor/releases/latest/download/cascade-hardware-monitor_1.0.0_amd64.deb) | x64 |
+| **Windows** | [Cascade Hardware Monitor-1.0.0-win-x64.exe](https://github.com/tantulabs/cascade-hardware-monitor/releases/latest/download/Cascade%20Hardware%20Monitor-1.0.0-win-x64.exe) | x64 |
+| **macOS (Intel)** | [Cascade Hardware Monitor-1.0.0-mac-x64.dmg](https://github.com/tantulabs/cascade-hardware-monitor/releases/latest/download/Cascade%20Hardware%20Monitor-1.0.0-mac-x64.dmg) | x64 |
+| **macOS (Apple Silicon)** | [Cascade Hardware Monitor-1.0.0-mac-arm64.dmg](https://github.com/tantulabs/cascade-hardware-monitor/releases/latest/download/Cascade%20Hardware%20Monitor-1.0.0-mac-arm64.dmg) | ARM64 |
+| **Linux (AppImage)** | [Cascade Hardware Monitor-1.0.0-linux-x86_64.AppImage](https://github.com/tantulabs/cascade-hardware-monitor/releases/latest/download/Cascade%20Hardware%20Monitor-1.0.0-linux-x86_64.AppImage) | x64 |
+| **Linux (Debian)** | [Cascade Hardware Monitor-1.0.0-linux-amd64.deb](https://github.com/tantulabs/cascade-hardware-monitor/releases/latest/download/Cascade%20Hardware%20Monitor-1.0.0-linux-amd64.deb) | x64 |
 
 > 📦 **All releases**: [github.com/tantulabs/cascade-hardware-monitor/releases](https://github.com/tantulabs/cascade-hardware-monitor/releases)
 
